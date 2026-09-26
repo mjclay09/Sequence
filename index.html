@@ -325,11 +325,16 @@ const TIERS = {rx:'Approved Rx', human:'Limited human data', early:'Early resear
 const ROUTES = {inj:'Injection', oral:'Oral', nasal:'Nasal spray', topical:'Topical'};
 
 const PEPTIDES = [
-  {id:'glp1', name:'GLP-1 medication', aka:'Semaglutide · Tirzepatide', seq:'HAEGTFTSDVSSYLEGQAAKEFIAWLVRGRG', len:'31–39 aa', routes:['inj','oral'], tier:'rx', status:'Prescription only',
+  {id:'tirz', name:'Tirzepatide', aka:'Zepbound · Mounjaro · dual GLP-1/GIP', seq:['Y','Aib','E','G','T','F','T','S','D','Y','S','I','Aib','L','D','K','I','A','Q','K','A','F','V','Q','W','L','I','A','G','G','P','S','S','G','A','P','P','P','S'], len:'39 aa', routes:['inj'], tier:'rx', status:'Prescription only',
     w:{fat:5, longevity:1},
-    research:'The most studied peptides on this list. Large human trials show meaningful weight loss by curbing appetite and slowing digestion. Requires a prescription and medical follow-up.',
-    why:{fat:'The strongest human evidence for fat loss of anything here.', longevity:'Being studied for heart and metabolic outcomes beyond weight.'},
-    ask:'Am I a candidate for a GLP-1, and which one fits my health history?'},
+    research:'Works on two appetite hormones, GLP-1 and GIP. In a head-to-head trial it produced more weight loss than semaglutide: about 20% of body weight versus 14% over 72 weeks. Weekly injection.',
+    why:{fat:'The most weight loss of any approved medication in head-to-head trials.', longevity:'Being studied for heart, sleep apnea and metabolic outcomes beyond weight.'},
+    ask:'Is tirzepatide or semaglutide the better fit for my health history and goals?'},
+  {id:'sema', name:'Semaglutide', aka:'Wegovy · Ozempic · Rybelsus', seq:'HAEGTFTSDVSSYLEGQAAKEFIAWLVRGRG', len:'31 aa', routes:['inj','oral'], tier:'rx', status:'Prescription only',
+    w:{fat:4, longevity:1},
+    research:'A GLP-1 medication with the longest track record and years of large human trials. It curbs appetite and slows digestion, and has trial evidence for fewer heart attacks and strokes. Weekly injection or daily tablet.',
+    why:{fat:'Strong human evidence for fat loss, with proven heart protection and a tablet option.', longevity:'Trial data shows fewer heart attacks and strokes in people with heart disease and excess weight.'},
+    ask:'Is semaglutide or tirzepatide the better fit for my health history and goals?'},
   {id:'tesa', name:'Tesamorelin', aka:'GHRH analog', seq:'YADAIFTNSYRKVLGQLSARKLLQDIMSRQQGESNQERGARARL', len:'44 aa', routes:['inj'], tier:'rx', status:'Prescription only',
     w:{fat:3, muscle:1},
     research:'FDA-approved to reduce visceral belly fat in a specific patient group. It raises your own growth hormone output. Use for general fat loss is off-label.',
@@ -583,7 +588,7 @@ function submitResults(r){
     name: contact.name, email: contact.email, address: contact.address, consent: contact.consent, company: contact.company || '',
     goal: GOALS[answers.goal].label,
     answers: qa,
-    stack: r.items.map(it => ({name: it.p.name, tier: TIERS[it.p.tier], routes: it.routes.map(x => ROUTES[x]).join(', '), why: it.goal ? it.p.why[it.goal] : ''})),
+    stack: r.items.map(it => ({name: it.p.name, tier: TIERS[it.p.tier], routes: it.routes.map(x => ROUTES[x]).join(', '), why: it.whyText})),
     notes: r.notes
   };
   return fetch('/api/submit', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload), keepalive:true})
@@ -603,9 +608,12 @@ function buildStack(){
   const primary = answers.goal, also = answers.also || [], flags = answers.flags || [];
   const noInj = answers.route === 'avoid';
   const notes = [], excluded = new Set();
-  if (flags.includes('thyroid')){ excluded.add('glp1'); notes.push('GLP-1 medications carry a warning for personal or family history of medullary thyroid cancer or MEN2, so we left them out.'); }
-  if (flags.includes('panc')){ excluded.add('glp1'); notes.push('GLP-1 medications need extra caution after pancreatitis, so we left them out.'); }
+  if (flags.includes('thyroid')){ excluded.add('tirz'); excluded.add('sema'); notes.push('GLP-1 medications carry a warning for personal or family history of medullary thyroid cancer or MEN2, so we left them out.'); }
+  if (flags.includes('panc')){ excluded.add('tirz'); excluded.add('sema'); notes.push('GLP-1 medications need extra caution after pancreatitis, so we left them out.'); }
   if (flags.includes('heart')){ excluded.add('pt141'); notes.push('PT-141 can raise blood pressure, so we left it out.'); }
+  // One GLP medication per stack: semaglutide when heart protection or a tablet matters, tirzepatide otherwise.
+  const preferSema = flags.includes('heart') || noInj;
+  excluded.add(preferSema ? 'tirz' : 'sema');
 
   const goals = [primary, ...also];
   const scored = PEPTIDES
@@ -622,11 +630,14 @@ function buildStack(){
 
   const items = stack.map((x, k) => {
     const g = goals.find(g => x.p.w[g] && x.p.why[g]);
+    let whyOverride = null;
+    if (x.p.id === 'sema' && flags.includes('heart')) whyOverride = 'You flagged a heart condition. Semaglutide is the one with trial evidence for fewer heart attacks and strokes.';
+    else if (x.p.id === 'sema' && noInj) whyOverride = 'Comes as a daily tablet, so no injections, with strong human evidence for fat loss.';
     const warn = [];
-    if (flags.includes('diab') && x.p.id === 'glp1') warn.push('You mentioned diabetes or glucose-lowering meds. Combined with a GLP-1, blood sugar can drop too low. This has to go through your doctor.');
+    if (flags.includes('diab') && ['tirz','sema'].includes(x.p.id)) warn.push('You mentioned diabetes or glucose-lowering meds. Combined with a GLP-1, blood sugar can drop too low. This has to go through your doctor.');
     if (flags.includes('diab') && ['cjcipa','tesa'].includes(x.p.id)) warn.push('Raising growth hormone can push blood sugar up. With diabetes, this needs your doctor’s input.');
     if (x.p.tier === 'rx') warn.push('Prescription medication. Get it through a licensed provider, not a research supplier.');
-    return {p:x.p, anchor: k === 0 && x.hit, goal:g, routes: noInj ? x.p.routes.filter(r => r !== 'inj') : x.p.routes, warn};
+    return {p:x.p, anchor: k === 0 && x.hit, goal:g, whyText: whyOverride || (g ? x.p.why[g] : ''), routes: noInj ? x.p.routes.filter(r => r !== 'inj') : x.p.routes, warn};
   });
   if (anchorIdx === -1) notes.unshift(noInj
     ? `Nothing well-researched for ${GOALS[primary].short} comes in a non-injection form, so this stack leans on your other goals.`
@@ -679,7 +690,7 @@ function renderBlock(b){
 
 function summaryText(r){
   const lines = [`My Sequence match (goal: ${GOALS[answers.goal].label})`, ''];
-  r.items.forEach((it, k) => lines.push(`${k + 1}. ${it.p.name} (${TIERS[it.p.tier]}, ${it.routes.map(x => ROUTES[x]).join(' / ')})${it.goal ? ' — ' + it.p.why[it.goal] : ''}`));
+  r.items.forEach((it, k) => lines.push(`${k + 1}. ${it.p.name} (${TIERS[it.p.tier]}, ${it.routes.map(x => ROUTES[x]).join(' / ')})${it.whyText ? ' — ' + it.whyText : ''}`));
   lines.push('', 'Educational only. Not medical advice or dosing. Talk to a licensed clinician first.');
   return lines.join('\n');
 }
@@ -698,7 +709,7 @@ function renderResult(r, sending){
       <div class="ribbon">${ribbonHTML(it.p.seq)}</div>
       <p class="meta"><span>${it.p.len}</span><span>${it.routes.map(x => ROUTES[x]).join(' · ')}</span><span>${it.p.status}</span></p>
       <dl class="why">
-        ${it.goal ? `<dt>Why you</dt><dd>${it.p.why[it.goal]}</dd>` : ''}
+        ${it.whyText ? `<dt>Why you</dt><dd>${it.whyText}</dd>` : ''}
         <dt>Research</dt><dd class="muted">${it.p.research}</dd>
       </dl>
       ${it.warn.map(w => `<p class="warn">${icon.warn}<span>${w}</span></p>`).join('')}
