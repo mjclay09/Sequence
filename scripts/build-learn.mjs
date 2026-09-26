@@ -51,17 +51,18 @@ ${FONTS}
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta property="og:image" content="${abs('/assets/og-image.jpg')}">
 <link rel="stylesheet" href="/peptides/styles.css">
+<link rel="stylesheet" href="/assets/menu.css">
+<script src="/assets/menu.js" defer></script>
 ${[{ '@context': 'https://schema.org', '@type': 'Organization', name: SITE_NAME, slogan: TAGLINE, logo: abs('/assets/icon-512.png'), ...(SITE_URL && { url: SITE_URL + '/' }) }, ...jsonld].map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
 </head>
 <body>`;
 }
 
 const nav = (current) => `<header class="nav"><div class="wrap">
-  <a class="brand" href="/" aria-label="North Star Peptide home"><img src="/assets/north-star-mark.png" srcset="/assets/north-star-mark@2x.png 2x" width="34" height="34" alt=""><span class="wordmark">North Star<small>Peptide</small></span></a>
+  <a class="brand" href="/" aria-label="North Star Peptide home"><img src="/assets/north-star-mark.png" srcset="/assets/north-star-mark@2x.png 2x" width="46" height="46" alt=""><span class="wordmark">North Star<small>Peptide</small></span></a>
   <nav class="nav-links" aria-label="Main">
-    <a href="/peptides/"${current === 'hub' ? ' aria-current="page"' : ''}><span class="lg-only">Peptides Simplified</span><span class="sm">Learn</span></a>
-    <a class="calc-link" href="/calculator/"${current === 'calc' ? ' aria-current="page"' : ''}><span class="lg-only">Mixing calculator</span><span class="sm">Calculator</span></a>
     <a class="btn primary" href="/"><span class="lg-only">Find my stack</span><span class="sm">Quiz</span></a>
+    <button class="menu-btn" type="button" aria-label="Open menu"><i></i><i></i><i></i></button>
   </nav>
 </div></header>`;
 

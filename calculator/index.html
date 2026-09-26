@@ -21,6 +21,8 @@
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta property="og:image" content="/assets/og-image.jpg">
 <link rel="stylesheet" href="/peptides/styles.css">
+<link rel="stylesheet" href="/assets/menu.css">
+<script src="/assets/menu.js" defer></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"North Star Peptide","slogan":"Your compass for peptide research.","logo":"/assets/icon-512.png"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"North Star Peptide Mixing Calculator","applicationCategory":"HealthApplication","operatingSystem":"Any","description":"Your compass for peptide research: a free peptide reconstitution calculator. Enter your vial size and prescribed dose to see exactly how many units to draw, and the easiest amount of water to add.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How much bacteriostatic water should I add to my peptide vial?","acceptedAnswer":{"@type":"Answer","text":"Any amount works. The water only changes how concentrated the liquid is, not how much peptide is in the vial. Pick an amount that makes your prescribed dose easy to measure, ideally a whole number of units between about 10 and 50 on a 100-unit syringe. The calculator shows the easiest option for your numbers."}},{"@type":"Question","name":"What does 1 unit mean on an insulin syringe?","acceptedAnswer":{"@type":"Answer","text":"On a standard U-100 insulin syringe, 100 units equals 1 mL, so 1 unit is 0.01 mL. A 30-unit syringe holds 0.3 mL and a 50-unit syringe holds 0.5 mL."}},{"@type":"Question","name":"How do I convert mcg to units?","acceptedAnswer":{"@type":"Answer","text":"First work out the concentration: milligrams in the vial divided by milliliters of water. Convert your dose to milligrams (1,000 mcg = 1 mg), divide it by the concentration to get milliliters, then multiply by 100 to get units on a U-100 syringe."}},{"@type":"Question","name":"How many doses are in my vial?","acceptedAnswer":{"@type":"Answer","text":"Divide the amount in the vial by your dose, using the same unit for both. A 10 mg vial holds 20 doses of 500 mcg. In practice you may get slightly fewer because a little liquid stays in the vial."}},{"@type":"Question","name":"Does adding more water make a peptide weaker?","acceptedAnswer":{"@type":"Answer","text":"Each unit on the syringe holds less peptide, but the total in the vial stays the same. You just draw more units to get the same dose."}}]}</script>
@@ -50,7 +52,7 @@
 .seg button{font:inherit;font-weight:500;padding:14px 16px;background:transparent;color:var(--muted);border:0;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--text);color:var(--bg)}
 .hint{font-size:.86rem;color:var(--faint);margin:10px 0 0}
-.result{position:sticky;top:84px;border:1px solid rgba(226,196,141,.35);border-radius:28px;padding:26px;background:linear-gradient(160deg,rgba(226,196,141,.1),rgba(147,213,205,.04));}
+.result{position:sticky;top:96px;border:1px solid rgba(226,196,141,.35);border-radius:28px;padding:26px;background:linear-gradient(160deg,rgba(226,196,141,.1),rgba(147,213,205,.04));}
 .result .label{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
 .draw{font-family:var(--serif);font-weight:800;letter-spacing:-.045em;font-size:clamp(3.4rem,9vw,5.4rem);line-height:.9;margin:0;font-variant-numeric:tabular-nums}
 .draw small{font-size:.32em;letter-spacing:-.01em;font-weight:600;color:var(--muted);margin-left:6px}
@@ -78,11 +80,10 @@
 .steps-math code{font-family:var(--mono);font-size:.9em;color:var(--ice)}
 </style>
 <header class="nav"><div class="wrap">
-  <a class="brand" href="/" aria-label="North Star Peptide home"><img src="/assets/north-star-mark.png" srcset="/assets/north-star-mark@2x.png 2x" width="34" height="34" alt=""><span class="wordmark">North Star<small>Peptide</small></span></a>
+  <a class="brand" href="/" aria-label="North Star Peptide home"><img src="/assets/north-star-mark.png" srcset="/assets/north-star-mark@2x.png 2x" width="46" height="46" alt=""><span class="wordmark">North Star<small>Peptide</small></span></a>
   <nav class="nav-links" aria-label="Main">
-    <a href="/peptides/"><span class="lg-only">Peptides Simplified</span><span class="sm">Learn</span></a>
-    <a class="calc-link" href="/calculator/" aria-current="page"><span class="lg-only">Mixing calculator</span><span class="sm">Calculator</span></a>
     <a class="btn primary" href="/"><span class="lg-only">Find my stack</span><span class="sm">Quiz</span></a>
+    <button class="menu-btn" type="button" aria-label="Open menu"><i></i><i></i><i></i></button>
   </nav>
 </div></header>
 <main>

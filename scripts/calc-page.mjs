@@ -44,7 +44,7 @@ export function calcPage({ head, nav, footer, esc, abs, SITE_URL, UPDATED }) {
 .seg button{font:inherit;font-weight:500;padding:14px 16px;background:transparent;color:var(--muted);border:0;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--text);color:var(--bg)}
 .hint{font-size:.86rem;color:var(--faint);margin:10px 0 0}
-.result{position:sticky;top:84px;border:1px solid rgba(226,196,141,.35);border-radius:28px;padding:26px;background:linear-gradient(160deg,rgba(226,196,141,.1),rgba(147,213,205,.04));}
+.result{position:sticky;top:96px;border:1px solid rgba(226,196,141,.35);border-radius:28px;padding:26px;background:linear-gradient(160deg,rgba(226,196,141,.1),rgba(147,213,205,.04));}
 .result .label{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
 .draw{font-family:var(--serif);font-weight:800;letter-spacing:-.045em;font-size:clamp(3.4rem,9vw,5.4rem);line-height:.9;margin:0;font-variant-numeric:tabular-nums}
 .draw small{font-size:.32em;letter-spacing:-.01em;font-weight:600;color:var(--muted);margin-left:6px}
