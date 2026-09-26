@@ -1,4 +1,4 @@
-# Sequence
+# The North Star
 
 Peptide goal quiz plus "Peptides Simplified", a plain-English peptide library.
 
@@ -23,4 +23,4 @@ scripts/build-learn.mjs    regenerates peptides/, robots.txt and sitemap.xml
 Vercel → Settings → Environment Variables:
 - `RESEND_API_KEY` from resend.com/api-keys
 - `NOTIFY_TO` the inbox that gets results
-- `NOTIFY_FROM` optional, e.g. `Sequence <hello@yourdomain.com>` after verifying the domain in Resend
+- `NOTIFY_FROM` optional, e.g. `The North Star <hello@yourdomain.com>` after verifying the domain in Resend

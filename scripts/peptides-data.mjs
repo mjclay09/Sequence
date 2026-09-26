@@ -1,7 +1,7 @@
 // Content for "Peptides Simplified". Edit here, then run: node scripts/build-learn.mjs
 // Plain-English, no dosing. Evidence tags: 'human' = studies in people, 'animal' = animals, 'lab' = cells/test tubes.
 
-export const SITE_NAME = 'Sequence';
+export const SITE_NAME = 'The North Star';
 export const UPDATED = '2026-09-26';
 
 export const TIERS = {

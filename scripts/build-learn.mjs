@@ -25,7 +25,7 @@ function ribbon(seq, max = 18) {
 }
 
 const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&display=swap">`;
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&family=Michroma&display=swap">`;
 
 function head({ title, description, path, jsonld = [], ogType = 'website' }) {
   const canon = SITE_URL ? `<link rel="canonical" href="${abs(path)}">\n<meta property="og:url" content="${abs(path)}">` : '';
@@ -43,10 +43,13 @@ ${canon}
 <meta property="og:site_name" content="${SITE_NAME}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(description)}">
 ${FONTS}
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta property="og:image" content="${abs('/assets/og-image.jpg')}">
 <link rel="stylesheet" href="/peptides/styles.css">
 ${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
 </head>
@@ -54,10 +57,10 @@ ${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j).repl
 }
 
 const nav = (current) => `<header class="nav"><div class="wrap">
-  <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Sequence</a>
+  <a class="brand" href="/" aria-label="The North Star home"><img src="/assets/north-star-mark.png" srcset="/assets/north-star-mark@2x.png 2x" width="34" height="34" alt=""><span class="wordmark">The North Star</span></a>
   <nav class="nav-links" aria-label="Main">
     <a href="/peptides/"${current === 'hub' ? ' aria-current="page"' : ''}><span class="lg-only">Peptides Simplified</span><span class="sm">Learn</span></a>
-    <a href="/calculator/"${current === 'calc' ? ' aria-current="page"' : ''}><span class="lg-only">Mixing calculator</span><span class="sm">Calculator</span></a>
+    <a class="calc-link" href="/calculator/"${current === 'calc' ? ' aria-current="page"' : ''}><span class="lg-only">Mixing calculator</span><span class="sm">Calculator</span></a>
     <a class="btn primary" href="/"><span class="lg-only">Find my stack</span><span class="sm">Quiz</span></a>
   </nav>
 </div></header>`;

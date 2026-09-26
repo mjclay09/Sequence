@@ -5,10 +5,16 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Answer 8 quick questions and get a research-graded peptide stack for your goal.">
 <style>body{margin:0}</style>
-<title>Sequence Stack Finder</title>
+<title>The North Star · Peptide Stack Finder</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta property="og:title" content="The North Star · Find your peptide stack">
+<meta property="og:description" content="Answer 8 quick questions and see which peptides the research points to for your goal.">
+<meta property="og:image" content="/assets/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&family=Michroma&display=swap">
 <style>
 :root{
   color-scheme: dark;
@@ -50,6 +56,8 @@ button{font:inherit;color:inherit}
 .brand{background:none;border:0;padding:6px 8px;color:var(--text);cursor:pointer;border-radius:10px;transition:transform .1s ease-out, opacity .2s}
 .brand:hover{opacity:.85}
 .brand:active{transform:scale(.96)}
+.brand img{width:34px;height:34px;display:block;flex:none;filter:drop-shadow(0 0 10px rgba(255,255,255,.12))}
+.wordmark{font-family:"Michroma","Geist",system-ui,sans-serif;font-weight:400;font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;white-space:nowrap}
 .brand-mark{display:flex;gap:3px}
 .brand-mark i{width:7px;height:7px;border-radius:50%;background:var(--gold);display:block}
 .brand-mark i:nth-child(2){background:var(--ice)}
@@ -201,7 +209,8 @@ main{position:relative;z-index:1;padding-top:calc(60px + env(safe-area-inset-top
 .copyfall{width:100%;min-height:160px;margin-top:12px;background:var(--bg2);color:var(--text);border:1px solid var(--line-2);border-radius:14px;padding:12px;font-family:var(--mono);font-size:.78rem}
 .learn{display:inline-block;margin-top:16px;font-size:.9rem;color:var(--ice);text-underline-offset:3px}
 .learn:hover{color:var(--text)}
-.intro-learn{display:inline-flex;margin-top:18px;font-size:.92rem;color:var(--ice);text-underline-offset:3px}
+.intro>*{min-width:0}
+.intro-learn{display:inline;margin-top:18px;font-size:.92rem;color:var(--ice);text-underline-offset:3px}
 .intro-learn:hover{color:var(--text)}
 .notes{display:grid;gap:8px;margin:0 0 26px}
 
@@ -213,6 +222,7 @@ main{position:relative;z-index:1;padding-top:calc(60px + env(safe-area-inset-top
   .sample{max-width:480px}
 }
 @media (max-width:560px){
+  .wordmark{font-size:.62rem;letter-spacing:.16em}
   .opts.two{grid-template-columns:1fr}
   .screen{padding-inline:16px;padding-block:28px 60px}
   .bar-inner{padding-inline:12px}
@@ -240,7 +250,7 @@ main{position:relative;z-index:1;padding-top:calc(60px + env(safe-area-inset-top
     <button class="back" id="back" type="button" hidden>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Back
     </button>
-    <button class="brand" id="home" type="button" aria-label="Sequence, back to start"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Sequence</button>
+    <button class="brand" id="home" type="button" aria-label="The North Star, back to start"><img src="/assets/north-star-mark.png" srcset="/assets/north-star-mark@2x.png 2x" width="34" height="34" alt=""><span class="wordmark">The North Star</span></button>
     <span class="count" id="count"></span>
   </div>
   <div class="progress"><span id="prog"></span></div>
@@ -251,7 +261,7 @@ main{position:relative;z-index:1;padding-top:calc(60px + env(safe-area-inset-top
     <section class="screen" id="intro">
       <div class="intro">
         <div>
-          <p class="eyebrow">Peptide research, matched to you</p>
+          <p class="eyebrow">Your compass for peptide research</p>
           <h1 class="display">Find the stack built for <em>your goal.</em></h1>
           <p class="lede">Answer <strong>8 quick questions</strong> about your goals and lifestyle. We'll match you to the peptides the research points to, and show how strong the evidence is for each one.</p>
           <div class="cta-row">
@@ -614,7 +624,7 @@ function submitResults(r){
 /* ---------- Matching ---------- */
 function blockReason(){
   const f = answers.flags || [];
-  if (answers.age === 'u18') return {t:'This one’s for adults.', d:'Sequence is built for people 18 and over. If you’re curious about performance or recovery, a sports medicine doctor is a great place to start.'};
+  if (answers.age === 'u18') return {t:'This one’s for adults.', d:'The North Star is built for people 18 and over. If you’re curious about performance or recovery, a sports medicine doctor is a great place to start.'};
   if (f.includes('preg')) return {t:'Let’s pause here.', d:'Peptides haven’t been studied for safety during pregnancy, breastfeeding, or while trying to conceive. Your OB or doctor is the right person to talk to.'};
   if (f.includes('cancer')) return {t:'Let’s pause here.', d:'Several of these peptides boost growth signals in the body, like growth hormone and new blood vessel formation. With a cancer history, that could carry real risk. Please talk with your oncologist before considering any of them.'};
   return null;
@@ -705,7 +715,7 @@ function renderBlock(b){
 }
 
 function summaryText(r){
-  const lines = [`My Sequence match (goal: ${GOALS[answers.goal].label})`, ''];
+  const lines = [`My North Star match (goal: ${GOALS[answers.goal].label})`, ''];
   r.items.forEach((it, k) => lines.push(`${k + 1}. ${it.p.name} (${TIERS[it.p.tier]}, ${it.routes.map(x => ROUTES[x]).join(' / ')})${it.whyText ? ' — ' + it.whyText : ''}`));
   lines.push('', 'Educational only. Not medical advice or dosing. Talk to a licensed clinician first.');
   return lines.join('\n');
@@ -739,7 +749,7 @@ function renderResult(r, sending){
     <p class="res-lede">Based on the research, <strong>this may be a stack worth considering</strong> to help you reach your goal. It’s a starting point for a conversation with a clinician, not a plan to follow.</p>
     ${r.notes.length ? `<div class="notes">${r.notes.map(n => `<p class="warn" style="margin:0">${icon.warn}<span>${n}</span></p>`).join('')}</div>` : ''}
     <div class="stack">${cards || '<p class="res-lede">No match with your answers. A clinician can help you find the right path.</p>'}</div>
-    <div class="legend" aria-label="Sequence color key">
+    <div class="legend" aria-label="Amino acid color key">
       <span>Each chain is the peptide’s real amino acid sequence.</span>
       <span><i class="bead c">K</i>Charged</span>
       <span><i class="bead p">S</i>Polar</span>
@@ -758,7 +768,7 @@ function renderResult(r, sending){
     </div>
 
     <div class="disclaimer">
-      <b>Please read.</b> Sequence is an educational tool shared between friends. It isn’t medical advice, a diagnosis, or a prescription, and it doesn’t give dosing. Most peptides here are research compounds that aren’t FDA-approved for human use; purity and quality vary a lot between suppliers, and regulations change. Evidence grades reflect published research, not a promise of results. Talk with a licensed clinician before starting anything.
+      <b>Please read.</b> The North Star is an educational tool shared between friends. It isn’t medical advice, a diagnosis, or a prescription, and it doesn’t give dosing. Most peptides here are research compounds that aren’t FDA-approved for human use; purity and quality vary a lot between suppliers, and regulations change. Evidence grades reflect published research, not a promise of results. Talk with a licensed clinician before starting anything.
     </div>
 
     <div class="res-actions">
