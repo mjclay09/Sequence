@@ -57,13 +57,14 @@ const nav = (current) => `<header class="nav"><div class="wrap">
   <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Sequence</a>
   <nav class="nav-links" aria-label="Main">
     <a href="/peptides/"${current === 'hub' ? ' aria-current="page"' : ''}><span class="lg-only">Peptides Simplified</span><span class="sm">Learn</span></a>
+    <a href="/calculator/"${current === 'calc' ? ' aria-current="page"' : ''}><span class="lg-only">Mixing calculator</span><span class="sm">Calculator</span></a>
     <a class="btn primary" href="/"><span class="lg-only">Find my stack</span><span class="sm">Quiz</span></a>
   </nav>
 </div></header>`;
 
 const footer = `<footer><div class="wrap">
   <span>© ${new Date(UPDATED).getFullYear()} ${SITE_NAME}. Educational only, not medical advice.</span>
-  <span><a href="/peptides/">Peptides Simplified</a> · <a href="/">Find my stack</a></span>
+  <span><a href="/peptides/">Peptides Simplified</a> · <a href="/calculator/">Mixing calculator</a> · <a href="/">Find my stack</a></span>
 </div></footer>`;
 
 const DISCLAIMER = `<p class="disclaimer">This page explains published research in plain language. It is not medical advice, a diagnosis, or a recommendation to take anything, and it does not give dosing. Most peptides here are not FDA-approved, and products sold online vary widely in purity. Rules around peptides are changing, so check the current status and talk with a licensed clinician before starting anything. Last reviewed ${UPDATED}.</p>`;
@@ -104,7 +105,7 @@ ${nav('hub')}
     <p class="eyebrow">Peptides Simplified</p>
     <h1>Peptides, explained <em>in plain English.</em></h1>
     <p class="lede">What a peptide is, why they are suddenly everywhere, and <strong>what studies actually show</strong> for ${PEPTIDES.length} of the most talked-about ones. No hype, no jargon.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn primary lg" href="#library">Look up a peptide</a><a class="btn lg" href="#what">What is a peptide?</a></div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn primary lg" href="#library">Look up a peptide</a><a class="btn lg" href="#what">What is a peptide?</a><a class="btn lg" href="/calculator/">Mixing calculator</a></div>
   </div></section>
 
   <section id="what"><div class="wrap split">
@@ -250,17 +251,20 @@ ${footer}
 `;
 }
 
+import { calcPage } from './calc-page.mjs';
 // ---------- Write ----------
 mkdirSync(OUT, { recursive: true });
 for (const d of readdirSync(OUT, { withFileTypes: true })) if (d.isDirectory() && !bySlug[d.name]) rmSync(join(OUT, d.name), { recursive: true });
 writeFileSync(join(OUT, 'index.html'), hub());
+mkdirSync(join(ROOT, 'calculator'), { recursive: true });
+writeFileSync(join(ROOT, 'calculator', 'index.html'), calcPage({ head, nav, footer, esc, abs, SITE_URL, UPDATED }));
 for (const p of PEPTIDES) {
   mkdirSync(join(OUT, p.slug), { recursive: true });
   writeFileSync(join(OUT, p.slug, 'index.html'), page(p));
 }
 writeFileSync(join(ROOT, 'robots.txt'), `User-agent: *\nAllow: /\n${SITE_URL ? `Sitemap: ${SITE_URL}/sitemap.xml\n` : ''}`);
 if (SITE_URL) {
-  const urls = ['/', '/peptides/', ...PEPTIDES.map((p) => `/peptides/${p.slug}/`)];
+  const urls = ['/', '/peptides/', '/calculator/', ...PEPTIDES.map((p) => `/peptides/${p.slug}/`)];
   writeFileSync(join(ROOT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${SITE_URL}${u}</loc><lastmod>${UPDATED}</lastmod></url>`).join('\n')}\n</urlset>\n`);
 } else if (existsSync(join(ROOT, 'sitemap.xml'))) {
   console.warn('SITE_URL not set: left existing sitemap.xml untouched.');

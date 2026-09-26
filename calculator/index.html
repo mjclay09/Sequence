@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Peptide Mixing Calculator: How Much Water and How Many Units to Draw</title>
+<meta name="description" content="Free peptide reconstitution calculator. Enter your vial size and prescribed dose to see exactly how many units to draw, and the easiest amount of water to add.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#090E11">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sequence">
+<meta property="og:title" content="Peptide Mixing Calculator: How Much Water and How Many Units to Draw">
+<meta property="og:description" content="Free peptide reconstitution calculator. Enter your vial size and prescribed dose to see exactly how many units to draw, and the easiest amount of water to add.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Peptide Mixing Calculator: How Much Water and How Many Units to Draw">
+<meta name="twitter:description" content="Free peptide reconstitution calculator. Enter your vial size and prescribed dose to see exactly how many units to draw, and the easiest amount of water to add.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&display=swap">
+<link rel="stylesheet" href="/peptides/styles.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Sequence Peptide Mixing Calculator","applicationCategory":"HealthApplication","operatingSystem":"Any","description":"Free peptide reconstitution calculator. Enter your vial size and prescribed dose to see exactly how many units to draw, and the easiest amount of water to add.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How much bacteriostatic water should I add to my peptide vial?","acceptedAnswer":{"@type":"Answer","text":"Any amount works. The water only changes how concentrated the liquid is, not how much peptide is in the vial. Pick an amount that makes your prescribed dose easy to measure, ideally a whole number of units between about 10 and 50 on a 100-unit syringe. The calculator shows the easiest option for your numbers."}},{"@type":"Question","name":"What does 1 unit mean on an insulin syringe?","acceptedAnswer":{"@type":"Answer","text":"On a standard U-100 insulin syringe, 100 units equals 1 mL, so 1 unit is 0.01 mL. A 30-unit syringe holds 0.3 mL and a 50-unit syringe holds 0.5 mL."}},{"@type":"Question","name":"How do I convert mcg to units?","acceptedAnswer":{"@type":"Answer","text":"First work out the concentration: milligrams in the vial divided by milliliters of water. Convert your dose to milligrams (1,000 mcg = 1 mg), divide it by the concentration to get milliliters, then multiply by 100 to get units on a U-100 syringe."}},{"@type":"Question","name":"How many doses are in my vial?","acceptedAnswer":{"@type":"Answer","text":"Divide the amount in the vial by your dose, using the same unit for both. A 10 mg vial holds 20 doses of 500 mcg. In practice you may get slightly fewer because a little liquid stays in the vial."}},{"@type":"Question","name":"Does adding more water make a peptide weaker?","acceptedAnswer":{"@type":"Answer","text":"Each unit on the syringe holds less peptide, but the total in the vial stays the same. You just draw more units to get the same dose."}}]}</script>
+</head>
+<body>
+<style>
+.calc{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:start}
+.calc>*{min-width:0}
+@media (max-width:900px){.calc{grid-template-columns:1fr}}
+.step{border:1px solid var(--line);border-radius:24px;padding:22px;background:var(--surface);margin-bottom:14px}
+.step-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px}
+.step-h h2{font-size:1.35rem;letter-spacing:-.025em;margin:0}
+.step-h span{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;color:var(--faint);text-transform:uppercase}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{font:inherit;font-family:var(--serif);font-weight:700;font-size:1.35rem;letter-spacing:-.02em;min-width:74px;padding:12px 16px;border-radius:16px;border:1px solid var(--line-2);background:transparent;color:var(--text);cursor:pointer;display:inline-flex;align-items:baseline;justify-content:center;gap:4px;transition:transform .1s ease-out,background .2s,border-color .2s;position:relative}
+.opt small{font-family:var(--sans);font-weight:400;font-size:.8rem;color:var(--muted)}
+.opt:hover{background:var(--surface-2)}
+.opt:active{transform:scale(.96)}
+.opt[aria-pressed="true"]{background:var(--gold);border-color:transparent;color:var(--gold-ink)}
+.opt[aria-pressed="true"] small{color:var(--gold-ink)}
+.opt.best::after{content:"Easiest";position:absolute;top:-9px;right:-6px;font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;background:var(--ice);color:#06201C;border-radius:6px;padding:2px 6px}
+.big-input{display:flex;align-items:center;gap:10px;margin-top:12px}
+.big-input input{flex:1;min-width:0;font:inherit;font-family:var(--serif);font-weight:700;font-size:1.8rem;letter-spacing:-.02em;color:var(--text);background:var(--bg2);border:1px solid var(--line-2);border-radius:16px;padding:12px 16px}
+.big-input input:focus{outline:none;border-color:var(--gold)}
+.big-input label{font-size:.9rem;color:var(--muted);white-space:nowrap}
+.seg{display:inline-flex;border:1px solid var(--line-2);border-radius:14px;overflow:hidden;flex:none}
+.seg button{font:inherit;font-weight:500;padding:14px 16px;background:transparent;color:var(--muted);border:0;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--text);color:var(--bg)}
+.hint{font-size:.86rem;color:var(--faint);margin:10px 0 0}
+.result{position:sticky;top:84px;border:1px solid rgba(226,196,141,.35);border-radius:28px;padding:26px;background:linear-gradient(160deg,rgba(226,196,141,.1),rgba(147,213,205,.04));}
+.result .label{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
+.draw{font-family:var(--serif);font-weight:800;letter-spacing:-.045em;font-size:clamp(3.4rem,9vw,5.4rem);line-height:.9;margin:0;font-variant-numeric:tabular-nums}
+.draw small{font-size:.32em;letter-spacing:-.01em;font-weight:600;color:var(--muted);margin-left:6px}
+.sub{color:var(--muted);margin:10px 0 18px}
+.syringe{width:100%;height:auto;display:block;margin:6px 0 18px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.stats div{background:var(--bg2);padding:12px 14px}
+.stats dt{font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:3px}
+.stats dd{margin:0;font-weight:500;font-variant-numeric:tabular-nums}
+.alert{margin:14px 0 0;padding:12px 14px;border-radius:14px;font-size:.9rem;line-height:1.45}
+.alert.warn{background:var(--rose-soft);color:#F2C3B6}
+.alert.tip{background:var(--ice-soft);color:#CBEDE8}
+.alert button{font:inherit;font-weight:600;color:inherit;background:none;border:0;text-decoration:underline;cursor:pointer;padding:0}
+.minibar{display:none}
+@media (max-width:900px){
+  .result{position:static}
+  .minibar{display:flex;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:30;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-radius:18px;background:rgba(14,22,26,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(226,196,141,.35);color:var(--text);text-decoration:none}
+  .minibar b{font-family:var(--serif);font-size:1.4rem;letter-spacing:-.03em}
+  .minibar span{font-size:.82rem;color:var(--muted)}
+  body{padding-bottom:84px}
+}
+.steps-math{counter-reset:m;list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.steps-math li{counter-increment:m;display:grid;grid-template-columns:auto 1fr;gap:14px;border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:var(--surface)}
+.steps-math li::before{content:counter(m);font-family:var(--mono);font-size:.8rem;color:var(--gold);padding-top:2px}
+.steps-math code{font-family:var(--mono);font-size:.9em;color:var(--ice)}
+</style>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Sequence</a>
+  <nav class="nav-links" aria-label="Main">
+    <a href="/peptides/"><span class="lg-only">Peptides Simplified</span><span class="sm">Learn</span></a>
+    <a href="/calculator/" aria-current="page"><span class="lg-only">Mixing calculator</span><span class="sm">Calculator</span></a>
+    <a class="btn primary" href="/"><span class="lg-only">Find my stack</span><span class="sm">Quiz</span></a>
+  </nav>
+</div></header>
+<main>
+  <section class="hero" style="padding-bottom:24px"><div class="wrap">
+    <p class="eyebrow">Mixing calculator</p>
+    <h1>How many units <em>do I draw?</em></h1>
+    <p class="lede">Enter what is in your vial and <strong>the dose your prescriber gave you</strong>. We do the math, show it on a syringe, and point out the water amount that makes your dose easiest to measure.</p>
+  </div></section>
+
+  <section style="padding-top:0"><div class="wrap calc">
+    <div>
+      <div class="step">
+        <div class="step-h"><h2>What’s in your vial?</h2><span>Step 1</span></div>
+        <div class="opts"><button type="button" class="opt" data-group="vial" data-v="2" aria-pressed="false">2<small>mg</small></button><button type="button" class="opt" data-group="vial" data-v="5" aria-pressed="false">5<small>mg</small></button><button type="button" class="opt" data-group="vial" data-v="10" aria-pressed="true">10<small>mg</small></button><button type="button" class="opt" data-group="vial" data-v="15" aria-pressed="false">15<small>mg</small></button><button type="button" class="opt" data-group="vial" data-v="20" aria-pressed="false">20<small>mg</small></button><button type="button" class="opt" data-group="vial" data-v="30" aria-pressed="false">30<small>mg</small></button><button type="button" class="opt" data-group="vial" data-v="50" aria-pressed="false">50<small>mg</small></button></div>
+        <div class="big-input"><input id="vial" type="number" inputmode="decimal" min="0" step="any" value="10" aria-label="Peptide in vial, mg"><label for="vial">mg total</label></div>
+        <p class="hint">Printed on the vial label, usually in mg.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-h"><h2>Your prescribed dose</h2><span>Step 2</span></div>
+        <div class="big-input">
+          <input id="dose" type="number" inputmode="decimal" min="0" step="any" value="500" aria-label="Dose per injection">
+          <div class="seg" role="group" aria-label="Dose unit"><button type="button" data-unit="mcg" aria-pressed="true">mcg</button><button type="button" data-unit="mg" aria-pressed="false">mg</button></div>
+        </div>
+        <p class="hint">Use the exact dose from your prescriber or pharmacy label. 1 mg = 1,000 mcg. Example numbers are filled in so you can see how it works.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-h"><h2>Your syringe</h2><span>Step 3</span></div>
+        <div class="opts">
+          <button type="button" class="opt" data-group="syr" data-v="30" aria-pressed="false">30<small>units · 0.3 mL</small></button>
+          <button type="button" class="opt" data-group="syr" data-v="50" aria-pressed="false">50<small>units · 0.5 mL</small></button>
+          <button type="button" class="opt" data-group="syr" data-v="100" aria-pressed="true">100<small>units · 1 mL</small></button>
+        </div>
+        <p class="hint">Standard U-100 insulin syringes: 100 units = 1 mL.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-h"><h2>Water you add</h2><span>Step 4</span></div>
+        <div class="opts" id="water-opts"><button type="button" class="opt" data-group="water" data-v="0.5" aria-pressed="false">0.5<small>mL</small></button><button type="button" class="opt" data-group="water" data-v="1" aria-pressed="false">1<small>mL</small></button><button type="button" class="opt" data-group="water" data-v="1.5" aria-pressed="false">1.5<small>mL</small></button><button type="button" class="opt" data-group="water" data-v="2" aria-pressed="true">2<small>mL</small></button><button type="button" class="opt" data-group="water" data-v="2.5" aria-pressed="false">2.5<small>mL</small></button><button type="button" class="opt" data-group="water" data-v="3" aria-pressed="false">3<small>mL</small></button></div>
+        <div class="big-input"><input id="water" type="number" inputmode="decimal" min="0" step="any" value="2" aria-label="Bacteriostatic water, mL"><label for="water">mL of water</label></div>
+        <p class="hint">Bacteriostatic water. Already mixed your vial? Enter what you actually added.</p>
+      </div>
+    </div>
+
+    <aside class="result" id="result" aria-live="polite">
+      <p class="label">Draw to</p>
+      <p class="draw" id="units">10<small>units</small></p>
+      <p class="sub" id="sub">on a 100-unit syringe, for a 500 mcg dose</p>
+      <svg class="syringe" id="syringe" viewBox="0 0 420 86" role="img" aria-label="Syringe filled to your dose"></svg>
+      <dl class="stats">
+        <div><dt>Each unit holds</dt><dd id="perunit">—</dd></div>
+        <div><dt>Concentration</dt><dd id="conc">—</dd></div>
+        <div><dt>Dose volume</dt><dd id="vol">—</dd></div>
+        <div><dt>Doses in vial</dt><dd id="count">—</dd></div>
+      </dl>
+      <div id="alerts"></div>
+    </aside>
+  </div></section>
+
+  <a class="minibar" href="#result" id="minibar"><span>Draw to</span><b id="mini">10 units</b></a>
+
+  <section><div class="wrap narrow article">
+    <p class="eyebrow">How it works</p>
+    <h2 style="margin-top:0">The math, step by step</h2>
+    <ol class="steps-math">
+      <li><span><b>Find the concentration.</b> Divide the peptide in the vial by the water you add. <code>10 mg ÷ 2 mL = 5 mg per mL</code></span></li>
+      <li><span><b>Match the units.</b> Convert your dose to mg. <code>500 mcg = 0.5 mg</code></span></li>
+      <li><span><b>Find the volume.</b> Divide your dose by the concentration. <code>0.5 mg ÷ 5 mg/mL = 0.1 mL</code></span></li>
+      <li><span><b>Convert to units.</b> On a U-100 syringe, multiply mL by 100. <code>0.1 mL × 100 = 10 units</code></span></li>
+    </ol>
+
+    <h2>Tips for measuring accurately</h2>
+    <ul class="list">
+      <li>Pick a water amount that puts your dose on a whole-number line, and between about 10 and 50 units on a 100-unit syringe. Very small draws are hard to measure.</li>
+      <li>More water does not weaken the vial. It spreads the same amount over more liquid, so you draw more units.</li>
+      <li>Write the concentration and the date on the vial after mixing, so you never have to redo the math.</li>
+      <li>Follow your pharmacy’s instructions for mixing, storage and how long the vial lasts once mixed.</li>
+      <li>Double-check your numbers with your pharmacist the first time.</li>
+    </ul>
+
+    <h2>Common questions</h2>
+    <div class="faq"><details><summary>How much bacteriostatic water should I add to my peptide vial?</summary><p>Any amount works. The water only changes how concentrated the liquid is, not how much peptide is in the vial. Pick an amount that makes your prescribed dose easy to measure, ideally a whole number of units between about 10 and 50 on a 100-unit syringe. The calculator shows the easiest option for your numbers.</p></details><details><summary>What does 1 unit mean on an insulin syringe?</summary><p>On a standard U-100 insulin syringe, 100 units equals 1 mL, so 1 unit is 0.01 mL. A 30-unit syringe holds 0.3 mL and a 50-unit syringe holds 0.5 mL.</p></details><details><summary>How do I convert mcg to units?</summary><p>First work out the concentration: milligrams in the vial divided by milliliters of water. Convert your dose to milligrams (1,000 mcg = 1 mg), divide it by the concentration to get milliliters, then multiply by 100 to get units on a U-100 syringe.</p></details><details><summary>How many doses are in my vial?</summary><p>Divide the amount in the vial by your dose, using the same unit for both. A 10 mg vial holds 20 doses of 500 mcg. In practice you may get slightly fewer because a little liquid stays in the vial.</p></details><details><summary>Does adding more water make a peptide weaker?</summary><p>Each unit on the syringe holds less peptide, but the total in the vial stays the same. You just draw more units to get the same dose.</p></details></div>
+
+    <p class="disclaimer">This calculator only converts your own numbers. It does not recommend peptides or doses, and it is not medical advice. Always use the dose and instructions from your prescriber or pharmacy, and confirm your math with a pharmacist. Last reviewed 2026-09-26.</p>
+  </div></section>
+</main>
+<footer><div class="wrap">
+  <span>© 2026 Sequence. Educational only, not medical advice.</span>
+  <span><a href="/peptides/">Peptides Simplified</a> · <a href="/calculator/">Mixing calculator</a> · <a href="/">Find my stack</a></span>
+</div></footer>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const WATERS = [0.5, 1, 1.5, 2, 2.5, 3];
+  const st = { vial: 10, dose: 500, unit: 'mcg', syr: 100, water: 2 };
+  const fmt = (n, d = 2) => (Math.round(n * 10 ** d) / 10 ** d).toLocaleString('en-US', { maximumFractionDigits: d });
+  const doseMg = () => (st.unit === 'mcg' ? st.dose / 1000 : st.dose);
+  const unitsFor = (w) => (doseMg() / (st.vial / w)) * 100;
+
+  // Easiest water: dose fits the syringe, lands near a whole number, and sits in a comfortable range.
+  function easiest() {
+    let best = null;
+    for (const w of WATERS) {
+      const u = unitsFor(w);
+      if (!(u > 0) || u > st.syr || u < 2) continue;
+      const lo = st.syr * 0.1, hi = st.syr * 0.5;
+      const range = u < lo ? (lo - u) / st.syr : u > hi ? (u - hi) / st.syr : 0;
+      const score = Math.abs(u - Math.round(u)) * 4 + Math.abs(u * 2 - Math.round(u * 2)) + range * 6;
+      if (!best || score < best.score - 1e-9) best = { w, u, score };
+    }
+    return best;
+  }
+
+  function syringe(units) {
+    const cap = st.syr, x0 = 40, x1 = 370, w = x1 - x0, frac = Math.max(0, Math.min(units / cap, 1));
+    const major = cap === 30 ? 5 : 10, minor = cap === 100 ? 2 : 1;
+    let ticks = '';
+    for (let t = 0; t <= cap; t += minor) {
+      const x = x0 + (t / cap) * w, isMaj = t % major === 0;
+      ticks += '<line x1="' + x + '" x2="' + x + '" y1="24" y2="' + (isMaj ? 40 : 33) + '" stroke="rgba(237,242,240,' + (isMaj ? .7 : .3) + ')" stroke-width="1"/>';
+      if (isMaj) ticks += '<text x="' + x + '" y="62" text-anchor="middle" font-size="11" fill="#93A4A1" font-family="Geist Mono, monospace">' + t + '</text>';
+    }
+    const fx = x0 + frac * w;
+    return '<defs><linearGradient id="liq" x1="0" x2="1"><stop offset="0" stop-color="#93D5CD" stop-opacity=".55"/><stop offset="1" stop-color="#E2C48D" stop-opacity=".85"/></linearGradient></defs>'
+      + '<rect x="' + x0 + '" y="20" width="' + w + '" height="26" rx="6" fill="rgba(255,255,255,.04)" stroke="rgba(196,222,217,.35)"/>'
+      + '<rect x="' + x0 + '" y="21" width="' + (frac * w) + '" height="24" rx="5" fill="url(#liq)"/>'
+      + ticks
+      + '<rect x="' + (fx - 3) + '" y="14" width="6" height="38" rx="2" fill="#EDF2F0"/>'
+      + '<rect x="' + (fx + 3) + '" y="29" width="' + Math.max(0, x1 + 40 - fx - 3) + '" height="8" rx="3" fill="rgba(237,242,240,.25)"/>'
+      + '<rect x="10" y="30" width="30" height="6" rx="2" fill="rgba(196,222,217,.5)"/>'
+      + '<rect x="' + (x1 + 38) + '" y="16" width="6" height="34" rx="2" fill="rgba(237,242,240,.4)"/>';
+  }
+
+  function render() {
+    const units = unitsFor(st.water), mg = doseMg();
+    const valid = st.vial > 0 && st.dose > 0 && st.water > 0;
+    const conc = st.vial / st.water;
+    $('units').innerHTML = valid ? fmt(units, 1) + '<small>units</small>' : '—<small>units</small>';
+    $('mini').textContent = valid ? fmt(units, 1) + ' units' : '—';
+    $('sub').textContent = valid ? 'on a ' + st.syr + '-unit syringe, for a ' + fmt(st.dose, 3) + ' ' + st.unit + ' dose' : 'Enter your vial, dose and water.';
+    $('syringe').innerHTML = syringe(valid ? units : 0);
+    $('perunit').textContent = valid ? fmt(conc * 10, 1) + ' mcg' : '—';
+    $('conc').textContent = valid ? fmt(conc, 2) + ' mg/mL' : '—';
+    $('vol').textContent = valid ? fmt(units / 100, 3) + ' mL' : '—';
+    $('count').textContent = valid ? Math.floor(st.vial / mg + 1e-9) + ' doses' : '—';
+
+    const best = valid ? easiest() : null;
+    document.querySelectorAll('#water-opts .opt').forEach((b) => b.classList.toggle('best', !!best && +b.dataset.v === best.w));
+    const a = [];
+    if (valid && units > st.syr) a.push('<p class="alert warn">That dose needs ' + fmt(units, 1) + ' units, more than this syringe holds. Use a bigger syringe or less water.</p>');
+    else if (valid && units < 3) a.push('<p class="alert warn">Under 3 units is very hard to measure accurately. Use more water or a smaller syringe.</p>');
+    if (valid && Math.abs(units - Math.round(units)) > 0.05 && units <= st.syr) a.push('<p class="alert warn">' + fmt(units, 1) + ' units falls between the lines. Rounding changes your dose, so consider a water amount that lands on a whole number.</p>');
+    if (valid && mg > st.vial) a.push('<p class="alert warn">Your dose is larger than the whole vial. Check the numbers and units.</p>');
+    if (best && best.w !== st.water) a.push('<p class="alert tip">Easiest to measure: add <b>' + best.w + ' mL</b> of water and draw <b>' + fmt(best.u, 1) + ' units</b>. <button type="button" id="use-best">Use this</button></p>');
+    else if (best && best.w === st.water) a.push('<p class="alert tip">This is the easiest water amount for your numbers.</p>');
+    else if (valid && !best) a.push('<p class="alert warn">No standard water amount (0.5 to 3 mL) fits this dose on this syringe. Try a different syringe size.</p>');
+    $('alerts').innerHTML = a.join('');
+    const ub = $('use-best'); if (ub) ub.onclick = () => { st.water = best.w; sync(); render(); };
+  }
+
+  function sync(keepInputs) {
+    if (!keepInputs) { $('vial').value = st.vial; $('water').value = st.water; }
+    document.querySelectorAll('.opt[data-group]').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.v === st[b.dataset.group])));
+    document.querySelectorAll('.seg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.unit === st.unit)));
+  }
+
+  document.querySelectorAll('.opt[data-group]').forEach((b) => b.addEventListener('click', () => { st[b.dataset.group] = +b.dataset.v; sync(); render(); }));
+  document.querySelectorAll('.seg button').forEach((b) => b.addEventListener('click', () => {
+    if (b.dataset.unit === st.unit) return;
+    st.dose = b.dataset.unit === 'mg' ? st.dose / 1000 : st.dose * 1000; st.unit = b.dataset.unit;
+    $('dose').value = +st.dose.toFixed(4); sync(); render();
+  }));
+  ['vial', 'water'].forEach((k) => $(k).addEventListener('input', () => { st[k] = parseFloat($(k).value) || 0; sync(true); render(); }));
+  $('dose').addEventListener('input', () => { st.dose = parseFloat($('dose').value) || 0; render(); });
+  sync(); render();
+})();
+</script>
+</body>
+</html>
