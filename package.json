@@ -1,0 +1,6 @@
+{
+  "name": "sequence-stack-finder",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=18" }
+}

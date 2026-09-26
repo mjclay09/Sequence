@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Answer 8 quick questions and get a research-graded peptide stack for your goal.">
+<style>body{margin:0}</style>
+<title>Sequence Stack Finder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#090E11; --bg2:#0E161A;
+  --surface:rgba(232,242,240,.045); --surface-2:rgba(232,242,240,.085);
+  --line:rgba(196,222,217,.13); --line-2:rgba(196,222,217,.26);
+  --text:#EDF2F0; --muted:#93A4A1; --faint:#61726F;
+  --gold:#E2C48D; --gold-soft:rgba(226,196,141,.12); --gold-ink:#191307;
+  --ice:#93D5CD; --ice-soft:rgba(147,213,205,.12);
+  --rose:#E8A493; --rose-soft:rgba(232,164,147,.11);
+  --serif:'Bricolage Grotesque','Arial Black',system-ui,sans-serif;
+  --sans:'Geist',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --spring:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:12px}
+[tabindex="-1"]:focus{outline:none}
+
+/* Atmosphere */
+.atmos{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(60vw 50vh at 85% 5%, rgba(226,196,141,.10), transparent 70%),
+    radial-gradient(55vw 55vh at 5% 95%, rgba(147,213,205,.09), transparent 70%),
+    linear-gradient(180deg,var(--bg),var(--bg2));}
+#chain{position:absolute;inset:0;width:100%;height:100%;opacity:.55}
+.grain{position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* Top bar */
+.bar{position:fixed;left:0;right:0;top:0;z-index:20;padding-top:env(safe-area-inset-top,0px);
+  background:rgba(9,14,17,.55);backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);}
+.bar-inner{max-width:1120px;margin:0 auto;padding-inline:20px;height:60px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px}
+.brand{grid-column:2;justify-self:center;display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:800;font-size:1.3rem;letter-spacing:-.035em}
+.brand-mark{display:flex;gap:3px}
+.brand-mark i{width:7px;height:7px;border-radius:50%;background:var(--gold);display:block}
+.brand-mark i:nth-child(2){background:var(--ice)}
+.brand-mark i:nth-child(3){background:var(--text);opacity:.6}
+.back{justify-self:start;display:inline-flex;align-items:center;gap:6px;background:none;border:0;padding:8px 10px 8px 4px;color:var(--muted);cursor:pointer;border-radius:10px;font-size:.92rem;transition:color .15s, transform .1s}
+.back:hover{color:var(--text)}
+.back:active{transform:scale(.96)}
+.back svg{width:18px;height:18px}
+.count{grid-column:3;justify-self:end;font-family:var(--mono);font-size:.78rem;color:var(--muted);letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.progress{height:2px;background:var(--line);position:relative;overflow:hidden}
+.progress span{position:absolute;inset:0;background:linear-gradient(90deg,var(--ice),var(--gold));transform-origin:left;transform:scaleX(0);transition:transform .6s var(--spring)}
+
+/* Stage */
+main{position:relative;z-index:1;padding-top:calc(60px + env(safe-area-inset-top,0px))}
+#stage{display:grid;min-height:calc(100vh - 60px)}
+.screen{grid-area:1/1;padding-inline:20px;padding-block:40px 72px;will-change:transform,opacity}
+
+/* Intro */
+.intro{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center;padding-block:32px 8px}
+.eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ice);margin:0 0 18px}
+.display{font-family:var(--serif);font-weight:800;font-variation-settings:'wdth' 88;font-size:clamp(2.9rem,7vw,5.6rem);line-height:.93;letter-spacing:-.035em;margin:0 0 24px;text-wrap:balance}
+.display em{font-style:normal;background:linear-gradient(100deg,var(--gold) 10%,#F3E3C2 45%,var(--ice) 95%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.06em}
+.lede{font-size:1.1rem;color:var(--muted);max-width:34em;margin:0 0 32px;font-weight:300}
+.lede strong{color:var(--text);font-weight:500}
+.cta-row{display:flex;flex-wrap:wrap;align-items:center;gap:16px 20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:1px solid var(--line-2);background:var(--surface);border-radius:999px;padding:14px 22px;font-size:.98rem;font-weight:500;cursor:pointer;transition:transform .1s ease-out, background .2s, border-color .2s, opacity .2s}
+.btn:hover{background:var(--surface-2)}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--gold);color:var(--gold-ink);border-color:transparent;padding:16px 26px;box-shadow:0 10px 40px -12px rgba(226,196,141,.55), inset 0 1px 0 rgba(255,255,255,.5)}
+.btn.primary:hover{background:#EACF9D}
+.btn[disabled]{opacity:.35;pointer-events:none}
+.btn svg{width:18px;height:18px}
+.fine{font-size:.82rem;color:var(--faint);max-width:40em;margin:28px 0 0;line-height:1.5}
+.gets{display:flex;flex-wrap:wrap;gap:8px 22px;margin:36px 0 0;padding:0;list-style:none}
+.gets li{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted)}
+.gets li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ice)}
+.gets li:nth-child(2)::before{background:var(--gold)}
+.gets li:nth-child(3)::before{background:var(--text);opacity:.5}
+
+.sample{position:relative;border:1px solid var(--line);border-radius:28px;padding:26px;background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.015));backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 40px 80px -30px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.12)}
+.sample-tag{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 18px;display:flex;justify-content:space-between}
+.sample .ghost{position:absolute;inset:auto 22px -14px 22px;height:28px;border-radius:0 0 22px 22px;border:1px solid var(--line);border-top:0;background:rgba(255,255,255,.02);z-index:-1}
+
+/* Question */
+.q{max-width:680px;margin:0 auto}
+.q-title{font-family:var(--serif);font-weight:750;font-variation-settings:'wdth' 90;font-size:clamp(2rem,4.8vw,3rem);line-height:1;letter-spacing:-.04em;margin:0 0 12px;text-wrap:balance}
+.q-sub{color:var(--muted);margin:0 0 30px;font-weight:300;font-size:1.02rem}
+.opts{display:grid;gap:10px}
+.opts.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.opt{position:relative;display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:18px;padding:16px 18px;cursor:pointer;
+  transition:transform .1s ease-out, background .2s, border-color .2s;-webkit-tap-highlight-color:transparent}
+.opt:hover{background:var(--surface-2);border-color:var(--line-2)}
+.opt:active{transform:scale(.98)}
+.opt[aria-checked="true"]{border-color:var(--gold);background:var(--gold-soft)}
+.opt-k{flex:none;width:24px;height:24px;border-radius:7px;border:1px solid var(--line-2);display:grid;place-items:center;font-family:var(--mono);font-size:.72rem;color:var(--faint)}
+.opt[aria-checked="true"] .opt-k{border-color:var(--gold);color:var(--gold)}
+.opt-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.opt-label{font-weight:500;font-size:1.02rem;letter-spacing:-.005em}
+.opt-sub{font-size:.86rem;color:var(--muted);font-weight:300}
+.opt-check{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line-2);display:grid;place-items:center;transition:background .2s, border-color .2s}
+.opt[aria-checked="true"] .opt-check{background:var(--gold);border-color:var(--gold)}
+.opt[aria-checked="true"] .opt-check::after{content:"";width:9px;height:5px;border:2px solid var(--gold-ink);border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.q-actions{display:flex;align-items:center;gap:16px;margin-top:26px;flex-wrap:wrap}
+.hint{font-size:.85rem;color:var(--faint)}
+.privacy{display:flex;align-items:center;gap:8px;margin-top:22px;font-size:.84rem;color:var(--faint)}
+.privacy svg{width:15px;height:15px;flex:none}
+@media (hover:none){.opt-k{display:none}}
+
+/* Ribbon (amino acid sequence) */
+.ribbon{position:relative;display:flex;align-items:center;gap:5px;overflow-x:auto;scrollbar-width:none;padding:6px 2px;
+  -webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
+.ribbon::-webkit-scrollbar{display:none}
+.bead{position:relative;flex:none;min-width:28px;height:28px;padding:0 6px;border-radius:14px;display:grid;place-items:center;font-family:var(--mono);font-size:.72rem;font-weight:500;border:1px solid transparent}
+.bead + .bead::before{content:"";position:absolute;right:100%;top:50%;width:5px;height:1px;background:var(--line-2)}
+.bead.c{background:var(--gold-soft);color:var(--gold);border-color:rgba(226,196,141,.3)}
+.bead.p{background:var(--ice-soft);color:var(--ice);border-color:rgba(147,213,205,.28)}
+.bead.h{background:rgba(237,242,240,.06);color:var(--text);border-color:rgba(237,242,240,.16)}
+.bead.m{background:transparent;color:var(--muted);border:1px dashed var(--line-2)}
+.bead.more{background:none;color:var(--faint);border:0;padding-left:8px}
+
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 11px;font-size:.74rem;font-weight:500;letter-spacing:.01em;white-space:nowrap;border:1px solid}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.tier-rx{color:var(--ice);border-color:rgba(147,213,205,.35);background:var(--ice-soft)}
+.tier-human{color:var(--gold);border-color:rgba(226,196,141,.35);background:var(--gold-soft)}
+.tier-early{color:var(--rose);border-color:rgba(232,164,147,.35);background:var(--rose-soft)}
+
+.pep-name{font-family:var(--serif);font-weight:750;font-size:1.85rem;line-height:1.05;letter-spacing:-.035em;margin:0}
+.pep-aka{font-size:.86rem;color:var(--muted);margin:4px 0 0}
+.pep-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:14px}
+.meta{font-family:var(--mono);font-size:.74rem;color:var(--faint);letter-spacing:.02em;margin:10px 0 0;display:flex;flex-wrap:wrap;gap:4px 14px}
+
+/* Analyze */
+.analyze{max-width:560px;margin:0 auto;padding-top:10vh;text-align:center;display:flex;flex-direction:column;align-items:center}
+.analyze .ribbon{-webkit-mask-image:none;mask-image:none;justify-content:center;flex-wrap:wrap;overflow:visible;margin:34px 0 26px;max-width:100%}
+.analyze .bead{opacity:0;animation:beadIn .5s var(--spring) forwards}
+@keyframes beadIn{from{opacity:0;transform:translateY(10px) scale(.6)}to{opacity:1;transform:none}}
+.status{font-family:var(--mono);font-size:.8rem;color:var(--muted);letter-spacing:.04em;min-height:1.4em}
+
+/* Results */
+.res{max-width:820px;margin:0 auto}
+.res-title{font-family:var(--serif);font-weight:800;font-variation-settings:'wdth' 88;font-size:clamp(2.5rem,6vw,4.2rem);line-height:.95;letter-spacing:-.035em;margin:0 0 16px;text-wrap:balance}
+.res-title em{font-style:normal;background:linear-gradient(100deg,var(--gold),#F3E3C2 50%,var(--ice));-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.06em}
+.res-lede{color:var(--muted);font-weight:300;font-size:1.06rem;max-width:38em;margin:0 0 36px}
+.res-lede strong{color:var(--text);font-weight:500}
+.stack{display:grid;gap:14px;counter-reset:s}
+.card{border:1px solid var(--line);border-radius:24px;padding:24px;background:linear-gradient(165deg,rgba(255,255,255,.055),rgba(255,255,255,.012));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.card.anchor{border-color:rgba(226,196,141,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 30px 70px -40px rgba(226,196,141,.45)}
+.role{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 12px;display:flex;align-items:center;gap:10px}
+.card.anchor .role{color:var(--gold)}
+.role::after{content:"";flex:1;height:1px;background:var(--line)}
+.why{margin:18px 0 0;display:grid;grid-template-columns:auto 1fr;gap:4px 14px}
+.why dt{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding-top:3px}
+.why dd{margin:0;font-size:.96rem}
+.why dd.muted{color:var(--muted);font-weight:300}
+.warn{margin:16px 0 0;padding:12px 14px;border-radius:14px;background:var(--rose-soft);color:#F2C3B6;font-size:.88rem;display:flex;gap:10px;line-height:1.45}
+.warn svg{flex:none;width:17px;height:17px;margin-top:1px;color:var(--rose)}
+
+.section{margin-top:44px}
+.section h3{font-family:var(--serif);font-weight:700;font-size:1.6rem;letter-spacing:-.035em;margin:0 0 14px}
+.asks{list-style:none;margin:0;padding:0;display:grid;gap:0;border-top:1px solid var(--line)}
+.asks li{padding:14px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;font-size:.98rem}
+.asks li span{font-family:var(--mono);font-size:.74rem;color:var(--gold);padding-top:4px;font-variant-numeric:tabular-nums}
+.found{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.found div{border:1px solid var(--line);border-radius:18px;padding:16px 18px;background:var(--surface)}
+.found b{display:block;font-weight:500;margin-bottom:4px}
+.found p{margin:0;font-size:.9rem;color:var(--muted);font-weight:300}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:18px;font-size:.8rem;color:var(--faint)}
+.legend .bead{min-width:22px;height:22px;font-size:.62rem;font-style:normal}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.disclaimer{margin-top:44px;padding:20px 22px;border:1px solid var(--line);border-radius:20px;font-size:.86rem;color:var(--muted);line-height:1.6;background:rgba(0,0,0,.2)}
+.disclaimer b{color:var(--text);font-weight:500}
+.res-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.form{display:grid;gap:14px;margin-top:6px}
+.field{display:grid;gap:6px}
+.field label{font-size:.86rem;color:var(--muted)}
+.field label span{color:var(--faint)}
+.field input,.field textarea{width:100%;font:inherit;font-size:1rem;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;transition:border-color .2s, background .2s;resize:vertical}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--gold);background:var(--surface-2)}
+.err{margin:0;font-size:.88rem;color:var(--rose)}
+.err:empty{display:none}
+.consent{display:flex;gap:12px;align-items:flex-start;font-size:.9rem;color:var(--muted);cursor:pointer;line-height:1.45}
+.consent input{flex:none;width:20px;height:20px;margin:1px 0 0;accent-color:var(--gold)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.sent{display:inline-flex;align-items:center;gap:8px;font-size:.86rem;color:var(--muted);margin:0 0 26px}
+.sent::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--faint)}
+.sent.ok::before{background:var(--ice)}
+.sent.fail{color:var(--rose)}
+.sent.fail::before{background:var(--rose)}
+.copyfall{width:100%;min-height:160px;margin-top:12px;background:var(--bg2);color:var(--text);border:1px solid var(--line-2);border-radius:14px;padding:12px;font-family:var(--mono);font-size:.78rem}
+.notes{display:grid;gap:8px;margin:0 0 26px}
+
+/* Block */
+.block{max-width:600px;margin:0 auto;padding-top:6vh}
+
+@media (max-width:880px){
+  .intro{grid-template-columns:1fr;gap:44px}
+  .sample{max-width:480px}
+}
+@media (max-width:560px){
+  .opts.two{grid-template-columns:1fr}
+  .screen{padding-inline:16px;padding-block:28px 60px}
+  .bar-inner{padding-inline:12px}
+  .card{padding:20px}
+  .pep-head{flex-direction:column;gap:10px}
+  .why{grid-template-columns:1fr}
+  .why dt{padding-top:6px}
+}
+@media (prefers-reduced-motion:reduce){
+  .analyze .bead{animation:none;opacity:1}
+  .progress span{transition:none}
+}
+@media (prefers-reduced-transparency:reduce){
+  .bar{background:#0B1215;backdrop-filter:none;-webkit-backdrop-filter:none}
+  .sample,.card{backdrop-filter:none;-webkit-backdrop-filter:none;background:#111A1E}
+}
+</style>
+</head>
+<body>
+
+<div class="atmos" aria-hidden="true"><canvas id="chain"></canvas><div class="grain"></div></div>
+
+<header class="bar">
+  <div class="bar-inner">
+    <button class="back" id="back" type="button" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Back
+    </button>
+    <span class="brand"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Sequence</span>
+    <span class="count" id="count"></span>
+  </div>
+  <div class="progress"><span id="prog"></span></div>
+</header>
+
+<main>
+  <div id="stage">
+    <section class="screen" id="intro">
+      <div class="intro">
+        <div>
+          <p class="eyebrow">Peptide research, matched to you</p>
+          <h1 class="display">Find the stack built for <em>your goal.</em></h1>
+          <p class="lede">Answer <strong>8 quick questions</strong> about your goals and lifestyle. We'll match you to the peptides the research points to, and show how strong the evidence is for each one.</p>
+          <div class="cta-row">
+            <button class="btn primary" id="start" type="button">Start my match
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+            <span class="hint">About 2 minutes</span>
+          </div>
+          <ul class="gets">
+            <li>A 2–3 peptide stack</li>
+            <li>Evidence grade for each</li>
+            <li>Questions for your doctor</li>
+          </ul>
+          <p class="fine">For education only. This is not medical advice, a prescription, or dosing guidance. Talk with a licensed clinician before you start anything.</p>
+        </div>
+        <div class="sample" aria-label="Example match">
+          <p class="sample-tag"><span>Example match</span><span>Heal an injury</span></p>
+          <div class="pep-head">
+            <div><p class="pep-name">BPC-157</p><p class="pep-aka">Body Protection Compound</p></div>
+            <span class="pill tier-early">Early research</span>
+          </div>
+          <div class="ribbon" data-seq="G E P P P G K P A D D A G L V"></div>
+          <p class="meta"><span>15 aa</span><span>Injection · Oral</span><span>Research compound</span></p>
+          <dl class="why">
+            <dt>Why</dt><dd>The most talked-about peptide for tendon, ligament and gut repair.</dd>
+          </dl>
+          <div class="ghost"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+(() => {
+const $ = (s, r = document) => r.querySelector(s);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Data ---------- */
+const GOALS = {
+  fat:{label:'Lose fat', sub:'Appetite, metabolism, body composition', short:'fat loss'},
+  muscle:{label:'Build muscle', sub:'Strength, lean mass, faster recovery', short:'muscle'},
+  heal:{label:'Heal an injury', sub:'Tendons, ligaments, joints, gut', short:'healing'},
+  skin:{label:'Skin & hair', sub:'Firmness, fine lines, hair quality', short:'skin & hair'},
+  sleep:{label:'Sleep deeper', sub:'Fall asleep easier, wake up restored', short:'sleep'},
+  focus:{label:'Focus & mood', sub:'Clarity, calm, less stress', short:'focus'},
+  longevity:{label:'Age well', sub:'Longevity and long-term health', short:'longevity'},
+  libido:{label:'Libido', sub:'Desire and arousal', short:'libido'}
+};
+const goalOpts = keys => keys.map(k => ({v:k, label:GOALS[k].label, sub:GOALS[k].sub}));
+
+const QUESTIONS = [
+  {id:'goal', type:'single', two:true, eyebrow:'Your goal', title:'What’s your number one goal?', sub:'We’ll build your stack around this.',
+    options:() => goalOpts(Object.keys(GOALS))},
+  {id:'also', type:'multi', optional:true, two:true, eyebrow:'Your goal', title:'Anything else on your list?', sub:'Pick any that apply. These shape the supporting picks.',
+    options:() => goalOpts(Object.keys(GOALS).filter(k => k !== answers.goal))},
+  {id:'age', type:'single', eyebrow:'About you', title:'How old are you?', options:[
+    {v:'u18', label:'Under 18'}, {v:'18', label:'18–29'}, {v:'30', label:'30–44'}, {v:'45', label:'45–59'}, {v:'60', label:'60+'}]},
+  {id:'train', type:'single', eyebrow:'Lifestyle', title:'How often do you train?', sub:'Lifting, sport, conditioning, anything that counts.', options:[
+    {v:'0', label:'Rarely or never'}, {v:'2', label:'1–2 times a week'}, {v:'4', label:'3–4 times a week'}, {v:'5', label:'5 or more times a week'}]},
+  {id:'sleep', type:'single', eyebrow:'Lifestyle', title:'How would you rate your sleep?', options:[
+    {v:'great', label:'Great', sub:'7+ hours, wake up rested'}, {v:'ok', label:'Okay', sub:'Enough most nights, not always deep'}, {v:'poor', label:'Poor', sub:'Short, broken, or wake up tired'}]},
+  {id:'exp', type:'single', eyebrow:'Experience', title:'Have you used peptides before?', options:[
+    {v:'new', label:'Never', sub:'We’ll keep your stack simple'}, {v:'some', label:'Tried one or two'}, {v:'exp', label:'I’m experienced'}]},
+  {id:'route', type:'single', eyebrow:'Preferences', title:'How do you feel about injections?', sub:'Some peptides come as nasal sprays, creams, or tablets.', options:[
+    {v:'ok', label:'I’m fine with them'}, {v:'avoid', label:'I’d rather avoid them'}]},
+  {id:'flags', type:'multi', eyebrow:'Safety', title:'Do any of these apply to you?', sub:'This keeps your match safer.', options:[
+    {v:'preg', label:'Pregnant, breastfeeding, or trying'},
+    {v:'cancer', label:'Cancer, now or in the past'},
+    {v:'thyroid', label:'Thyroid cancer (MTC) or MEN2', sub:'Personal or family history'},
+    {v:'panc', label:'History of pancreatitis'},
+    {v:'heart', label:'Heart condition or high blood pressure'},
+    {v:'diab', label:'Diabetes or glucose-lowering medication'},
+    {v:'none', label:'None of these', exclusive:true}]}
+];
+
+const TIERS = {rx:'Approved Rx', human:'Limited human data', early:'Early research'};
+const ROUTES = {inj:'Injection', oral:'Oral', nasal:'Nasal spray', topical:'Topical'};
+
+const PEPTIDES = [
+  {id:'glp1', name:'GLP-1 medication', aka:'Semaglutide · Tirzepatide', seq:'HAEGTFTSDVSSYLEGQAAKEFIAWLVRGRG', len:'31–39 aa', routes:['inj','oral'], tier:'rx', status:'Prescription only',
+    w:{fat:5, longevity:1},
+    research:'The most studied peptides on this list. Large human trials show meaningful weight loss by curbing appetite and slowing digestion. Requires a prescription and medical follow-up.',
+    why:{fat:'The strongest human evidence for fat loss of anything here.', longevity:'Being studied for heart and metabolic outcomes beyond weight.'},
+    ask:'Am I a candidate for a GLP-1, and which one fits my health history?'},
+  {id:'tesa', name:'Tesamorelin', aka:'GHRH analog', seq:'YADAIFTNSYRKVLGQLSARKLLQDIMSRQQGESNQERGARARL', len:'44 aa', routes:['inj'], tier:'rx', status:'Prescription only',
+    w:{fat:3, muscle:1},
+    research:'FDA-approved to reduce visceral belly fat in a specific patient group. It raises your own growth hormone output. Use for general fat loss is off-label.',
+    why:{fat:'Targets deep belly fat specifically, with human trial data behind it.', muscle:'Raises your own growth hormone, which supports lean mass.'},
+    ask:'Would tesamorelin make sense for belly fat, and how would we track IGF-1?'},
+  {id:'motsc', name:'MOTS-c', aka:'Mitochondrial peptide', seq:'MRWQEIGYIFYPRKLR', len:'16 aa', routes:['inj'], tier:'early', status:'Research compound',
+    w:{fat:2, longevity:3},
+    research:'A small peptide made by your mitochondria. Animal studies link it to better insulin sensitivity and exercise capacity. Human data is still very early.',
+    why:{fat:'Studied for metabolic health and insulin sensitivity.', longevity:'One of the most-watched mitochondrial peptides in aging research.'},
+    ask:'Is there any human data on MOTS-c that applies to someone like me?'},
+  {id:'cjcipa', name:'CJC-1295 + Ipamorelin', aka:'Growth hormone secretagogue pair', seq:['Aib','H','Nal','F','K'], len:'29 aa + 5 aa', routes:['inj'], tier:'human', status:'Research compound',
+    w:{muscle:4, sleep:2, fat:1, longevity:1},
+    research:'Two peptides that prompt your pituitary to release more of your own growth hormone. Small human studies show GH and IGF-1 rise. There is no long-term outcome data.',
+    why:{muscle:'Raises natural GH output, which supports recovery and lean mass.', sleep:'Your biggest GH pulses happen in deep sleep, and this pair is studied around that window.', fat:'Higher GH can shift body composition toward lean mass.', longevity:'GH declines with age; this pair nudges your own output back up.'},
+    ask:'Should I get IGF-1 and fasting glucose checked before and during?'},
+  {id:'bpc', name:'BPC-157', aka:'Body Protection Compound', seq:'GEPPPGKPADDAGLV', len:'15 aa', routes:['inj','oral'], tier:'early', status:'Research compound',
+    w:{heal:5, muscle:2},
+    research:'A fragment of a protein found in gastric juice. Animal studies show faster healing of tendon, ligament, muscle and gut lining. Human data is very limited.',
+    why:{heal:'The most talked-about peptide for tendon, ligament and gut repair.', muscle:'Studied for faster tissue recovery between hard sessions.'},
+    ask:'Is there any reason BPC-157 wouldn’t be safe with my history or medications?'},
+  {id:'tb500', name:'TB-500', aka:'Thymosin β4 fragment', seq:'LKKTETQ', len:'7 aa', routes:['inj'], tier:'early', status:'Research compound',
+    w:{heal:4, muscle:1},
+    research:'A fragment of thymosin beta-4, a protein involved in cell migration and repair. Promising in animal injury models, with little human data.',
+    why:{heal:'Often paired with BPC-157 in injury research for broader tissue repair.', muscle:'Studied for muscle and soft tissue recovery.'},
+    ask:'Should I get this injury properly diagnosed, with imaging, first?'},
+  {id:'ghk', name:'GHK-Cu', aka:'Copper peptide', seq:['G','H','K','Cu'], len:'3 aa + copper', routes:['topical','inj'], tier:'human', status:'Cosmetic ingredient (topical)',
+    w:{skin:5, heal:2, longevity:2},
+    research:'A copper-binding peptide found naturally in your blood. Human studies of topical creams show firmer skin and fewer fine lines. Injectable use is far less studied.',
+    why:{skin:'The best-supported option here for skin quality and hair.', heal:'Supports collagen and wound healing in lab and animal work.', longevity:'Your levels drop with age; studied for skin and tissue renewal.'},
+    ask:'Would a topical GHK-Cu product give me most of the benefit?'},
+  {id:'semax', name:'Semax', aka:'ACTH(4–10) analog', seq:'MEHFPGP', len:'7 aa', routes:['nasal'], tier:'human', status:'Research compound (Rx in Russia)',
+    w:{focus:5},
+    research:'A nasal peptide derived from ACTH. Prescribed in Russia for stroke recovery and cognition; Western clinical data is limited.',
+    why:{focus:'The most-studied nasal peptide for focus and mental clarity.'},
+    ask:'Could Semax interact with anything I take for mood or attention?'},
+  {id:'selank', name:'Selank', aka:'Tuftsin analog', seq:'TKPRPGP', len:'7 aa', routes:['nasal'], tier:'human', status:'Research compound (Rx in Russia)',
+    w:{focus:3, sleep:2},
+    research:'A nasal peptide based on tuftsin, an immune peptide. Small Russian trials report lower anxiety without sedation.',
+    why:{focus:'Studied for calm focus and stress relief without sedation.', sleep:'Lower anxiety at night can make it easier to fall asleep.'},
+    ask:'Is Selank reasonable to try for stress alongside what I already do?'},
+  {id:'epitalon', name:'Epitalon', aka:'Epithalon', seq:'AEDG', len:'4 aa', routes:['inj'], tier:'early', status:'Research compound',
+    w:{longevity:4, sleep:2},
+    research:'A four-amino-acid peptide studied in Russia for telomeres and the body clock. Mostly animal work and small human studies.',
+    why:{longevity:'The classic longevity peptide, studied for telomeres and aging.', sleep:'Studied for restoring melatonin rhythm in older adults.'},
+    ask:'What would we measure to know if this is doing anything?'},
+  {id:'dsip', name:'DSIP', aka:'Delta sleep-inducing peptide', seq:'WAGGDASGE', len:'9 aa', routes:['inj'], tier:'early', status:'Research compound',
+    w:{sleep:3},
+    research:'Discovered in the 1970s for its link to deep sleep. Results from small human studies are mixed.',
+    why:{sleep:'Named for deep sleep, with mixed but interesting early data.'},
+    ask:'Should I rule out sleep apnea or other causes first?'},
+  {id:'pt141', name:'PT-141', aka:'Bremelanotide', seq:['Nle','D','H','F','R','W','K'], len:'7 aa, cyclic', routes:['inj'], tier:'rx', status:'Rx for one use, off-label otherwise',
+    w:{libido:5},
+    research:'FDA-approved for low sexual desire in premenopausal women. It works on the brain rather than blood flow. Can raise blood pressure and cause nausea.',
+    why:{libido:'The only peptide here with approved human data for desire.'},
+    ask:'Is my blood pressure in a safe range for PT-141?'}
+];
+
+/* ---------- Helpers ---------- */
+const CLS = ch => /^(Cu|Aib|Nal|Nle)$/.test(ch) ? 'm' : 'DEKRH'.includes(ch) ? 'c' : 'STNQYCG'.includes(ch) ? 'p' : 'h';
+function ribbonHTML(seq, max = 16){
+  const t = Array.isArray(seq) ? seq : seq.split(/\s*/).filter(Boolean);
+  const shown = t.slice(0, max).map(x => `<span class="bead ${CLS(x)}">${x}</span>`).join('');
+  return shown + (t.length > max ? `<span class="bead more">+${t.length - max}</span>` : '');
+}
+document.querySelectorAll('[data-seq]').forEach(el => el.innerHTML = ribbonHTML(el.dataset.seq.split(' ')));
+const icon = {
+  warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg>',
+  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>',
+  arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
+};
+
+/* ---------- State & navigation ---------- */
+let answers = {};
+let idx = -1;           // -1 intro, 0..n-1 questions, 'analyze' | 'result' | 'block'
+let cur = $('#intro');
+const introHTML = cur.outerHTML;
+let analyzeTimer = null;
+
+function show(el, dir = 1){
+  const stage = $('#stage');
+  const old = cur;
+  el.classList.add('screen');
+  stage.appendChild(el);
+  cur = el;
+  window.scrollTo(0, 0);
+  if (old && old !== el){
+    old.removeAttribute('id');
+    old.setAttribute('aria-hidden', 'true');
+    old.style.pointerEvents = 'none';
+    const out = old.animate(reduce
+      ? [{opacity:1},{opacity:0}]
+      : [{opacity:1, transform:'none'},{opacity:0, transform:`translateX(${-36*dir}px)`}],
+      {duration: reduce ? 150 : 240, easing:'cubic-bezier(.4,0,1,1)', fill:'forwards'});
+    out.onfinish = () => old.remove();
+  }
+  el.animate(reduce
+    ? [{opacity:0},{opacity:1}]
+    : [{opacity:0, transform:`translateX(${48*dir}px)`},{opacity:1, transform:'none'}],
+    {duration: reduce ? 200 : 560, easing:'cubic-bezier(.16,1,.3,1)', delay: old ? 50 : 0, fill:'backwards'});
+  const h = el.querySelector('h1, h2');
+  if (h){ h.setAttribute('tabindex', '-1'); h.focus({preventScroll:true}); }
+  updateBar();
+}
+
+function updateBar(){
+  const n = QUESTIONS.length;
+  const q = typeof idx === 'number' && idx >= 0;
+  $('#back').hidden = !(q || idx === 'contact');
+  $('#count').textContent = q ? `${String(idx+1).padStart(2,'0')} / ${String(n).padStart(2,'0')}` : (idx === 'contact' ? 'Last step' : idx === 'result' ? 'Your match' : '');
+  const p = idx === -1 ? 0 : q ? (idx + 1) / n : 1;
+  $('#prog').style.transform = `scaleX(${p})`;
+}
+
+function goQ(i, dir = 1){ idx = i; show(renderQ(i), dir); }
+function goIntro(){ idx = -1; const d = document.createElement('div'); d.innerHTML = introHTML; const el = d.firstElementChild; el.removeAttribute('id'); bindIntro(el); show(el, -1); }
+function bindIntro(el){ $('#start', el) && ($('#start', el).onclick = () => goQ(0)); el.querySelectorAll('[data-seq]').forEach(r => r.innerHTML = ribbonHTML(r.dataset.seq.split(' '))); }
+bindIntro(cur);
+
+$('#back').onclick = () => {
+  if (idx === 'contact') return goQ(QUESTIONS.length - 1, -1);
+  if (typeof idx !== 'number') return;
+  if (idx === 0) goIntro(); else goQ(idx - 1, -1);
+};
+
+/* ---------- Question screen ---------- */
+function isSel(q, v){ const a = answers[q.id]; return q.type === 'multi' ? (a || []).includes(v) : a === v; }
+
+function renderQ(i){
+  const q = QUESTIONS[i];
+  const opts = typeof q.options === 'function' ? q.options() : q.options;
+  if (q.type === 'multi' && answers[q.id]) answers[q.id] = answers[q.id].filter(v => opts.some(o => o.v === v));
+  const el = document.createElement('section');
+  el.innerHTML = `<div class="q">
+    <p class="eyebrow">${q.eyebrow}</p>
+    <h2 class="q-title">${q.title}</h2>
+    ${q.sub ? `<p class="q-sub">${q.sub}</p>` : '<div style="height:18px"></div>'}
+    <div class="opts ${q.two ? 'two' : ''}" role="${q.type === 'multi' ? 'group' : 'radiogroup'}" aria-label="${q.title}">
+      ${opts.map((o, k) => `<button type="button" id="opt-${q.id}-${o.v}" class="opt" data-v="${o.v}" role="${q.type === 'multi' ? 'checkbox' : 'radio'}" aria-checked="${isSel(q, o.v)}">
+        <span class="opt-k" aria-hidden="true">${k < 9 ? k + 1 : ''}</span>
+        <span class="opt-text"><span class="opt-label">${o.label}</span>${o.sub ? `<span class="opt-sub">${o.sub}</span>` : ''}</span>
+        <span class="opt-check" aria-hidden="true"></span></button>`).join('')}
+    </div>
+    ${q.type === 'multi' ? `<div class="q-actions"><button type="button" class="btn primary" id="cont-${q.id}">Continue ${icon.arrow}</button>${q.optional ? '<span class="hint">Optional. Skip if nothing else matters right now.</span>' : ''}</div>` : ''}
+    
+  </div>`;
+
+  const buttons = [...el.querySelectorAll('.opt')];
+  const cont = $(`#cont-${q.id}`, el);
+  const syncCont = () => { if (cont) cont.disabled = !q.optional && !(answers[q.id] || []).length; };
+  syncCont();
+  let advancing = false;
+
+  const choose = (btn) => {
+    const v = btn.dataset.v;
+    if (q.type === 'single'){
+      if (advancing) return;
+      answers[q.id] = v;
+      buttons.forEach(b => b.setAttribute('aria-checked', b === btn));
+      advancing = true;
+      setTimeout(() => { if (cur === el) next(i); }, reduce ? 120 : 260);
+    } else {
+      const opt = opts.find(o => o.v === v);
+      let arr = answers[q.id] || [];
+      if (arr.includes(v)) arr = arr.filter(x => x !== v);
+      else if (opt.exclusive) arr = [v];
+      else arr = arr.filter(x => !opts.find(o => o.v === x)?.exclusive).concat(v);
+      answers[q.id] = arr;
+      buttons.forEach(b => b.setAttribute('aria-checked', arr.includes(b.dataset.v)));
+      syncCont();
+    }
+  };
+  buttons.forEach(b => b.addEventListener('click', () => choose(b)));
+  if (cont) cont.onclick = () => next(i);
+  el._key = (e) => {
+    const n = parseInt(e.key, 10);
+    if (n >= 1 && n <= buttons.length && n <= 9){ choose(buttons[n-1]); buttons[n-1].focus(); }
+    else if (e.key === 'Enter' && cont && !cont.disabled && document.activeElement?.classList.contains('opt') === false){ next(i); }
+  };
+  return el;
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (cur && cur._key) cur._key(e);
+});
+
+function next(i){
+  if (i < QUESTIONS.length - 1) goQ(i + 1, 1);
+  else {
+    const b = blockReason();
+    if (b){ idx = 'block'; show(renderBlock(b)); }
+    else goContact(1);
+  }
+}
+
+/* ---------- Contact step ---------- */
+const OWNER = 'Mark';
+let contact = {name:'', email:'', address:'', consent:false};
+function goContact(dir = 1){ idx = 'contact'; show(renderContact(), dir); }
+function renderContact(){
+  const el = document.createElement('section');
+  el.innerHTML = `<div class="q">
+    <p class="eyebrow">Last step</p>
+    <h2 class="q-title">Who’s this match for?</h2>
+    <p class="q-sub">${OWNER} gets a copy of your answers and results so he can follow up with you.</p>
+    <form class="form" id="contact-form" novalidate>
+      <div class="field"><label for="c-name">First name</label><input id="c-name" name="name" autocomplete="given-name" maxlength="80" required></div>
+      <div class="field"><label for="c-email">Email</label><input id="c-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="120" required></div>
+      <div class="field"><label for="c-address">Mailing address</label><textarea id="c-address" name="address" rows="2" autocomplete="street-address" maxlength="300" required></textarea></div>
+      <div class="hp" aria-hidden="true"><label for="c-company">Company</label><input id="c-company" name="company" tabindex="-1" autocomplete="off"></div>
+      <label class="consent" for="c-consent"><input type="checkbox" id="c-consent" name="consent"><span>Send my answers, including my safety answers, and my results to ${OWNER}.</span></label>
+      <p class="field err" id="c-err" role="alert"></p>
+      <div class="q-actions" style="margin-top:4px"><button type="submit" class="btn primary" id="c-submit">See my stack ${icon.arrow}</button></div>
+    </form>
+    <p class="privacy">${icon.lock}Only ${OWNER} sees this. It’s sent once by email and isn’t used for anything else.</p>
+  </div>`;
+  const f = $('#contact-form', el);
+  f.elements.name.value = contact.name; f.elements.email.value = contact.email;
+  f.elements.address.value = contact.address; f.elements.consent.checked = contact.consent;
+  f.addEventListener('input', () => {
+    $('#c-err', el).textContent = '';
+    contact = {name:f.elements.name.value, email:f.elements.email.value, address:f.elements.address.value, consent:f.elements.consent.checked};
+  });
+  f.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const err = $('#c-err', el);
+    const name = f.elements.name.value.trim(), email = f.elements.email.value.trim();
+    if (!name){ err.textContent = 'Add your first name so Mark knows who this is.'; f.elements.name.focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ err.textContent = 'Enter an email like you@example.com.'; f.elements.email.focus(); return; }
+    if (f.elements.address.value.trim().length < 8){ err.textContent = 'Add your full mailing address: street, city, state and ZIP.'; f.elements.address.focus(); return; }
+    if (!f.elements.consent.checked){ err.textContent = 'Tick the box to send your results to ' + OWNER + '.'; return; }
+    err.textContent = '';
+    contact = {name, email, address:f.elements.address.value.trim(), consent:true, company:f.elements.company.value};
+    finish();
+  });
+  return el;
+}
+
+/* ---------- Send to owner ---------- */
+function labelFor(q, v){
+  const opts = typeof q.options === 'function' ? goalOpts(Object.keys(GOALS)) : q.options;
+  return (opts.find(o => o.v === v) || {}).label || v;
+}
+function submitResults(r){
+  const qa = QUESTIONS.map(q => {
+    const a = answers[q.id];
+    const val = Array.isArray(a) ? (a.length ? a.map(v => labelFor(q, v)).join(', ') : 'None') : (a ? labelFor(q, a) : (q.type === 'multi' ? 'None' : '—'));
+    return {q: q.title, a: val};
+  });
+  const payload = {
+    name: contact.name, email: contact.email, address: contact.address, consent: contact.consent, company: contact.company || '',
+    goal: GOALS[answers.goal].label,
+    answers: qa,
+    stack: r.items.map(it => ({name: it.p.name, tier: TIERS[it.p.tier], routes: it.routes.map(x => ROUTES[x]).join(', '), why: it.goal ? it.p.why[it.goal] : ''})),
+    notes: r.notes
+  };
+  return fetch('/api/submit', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload), keepalive:true})
+    .then(res => res.ok);
+}
+
+/* ---------- Matching ---------- */
+function blockReason(){
+  const f = answers.flags || [];
+  if (answers.age === 'u18') return {t:'This one’s for adults.', d:'Sequence is built for people 18 and over. If you’re curious about performance or recovery, a sports medicine doctor is a great place to start.'};
+  if (f.includes('preg')) return {t:'Let’s pause here.', d:'Peptides haven’t been studied for safety during pregnancy, breastfeeding, or while trying to conceive. Your OB or doctor is the right person to talk to.'};
+  if (f.includes('cancer')) return {t:'Let’s pause here.', d:'Several of these peptides boost growth signals in the body, like growth hormone and new blood vessel formation. With a cancer history, that could carry real risk. Please talk with your oncologist before considering any of them.'};
+  return null;
+}
+
+function buildStack(){
+  const primary = answers.goal, also = answers.also || [], flags = answers.flags || [];
+  const noInj = answers.route === 'avoid';
+  const notes = [], excluded = new Set();
+  if (flags.includes('thyroid')){ excluded.add('glp1'); notes.push('GLP-1 medications carry a warning for personal or family history of medullary thyroid cancer or MEN2, so we left them out.'); }
+  if (flags.includes('panc')){ excluded.add('glp1'); notes.push('GLP-1 medications need extra caution after pancreatitis, so we left them out.'); }
+  if (flags.includes('heart')){ excluded.add('pt141'); notes.push('PT-141 can raise blood pressure, so we left it out.'); }
+
+  const goals = [primary, ...also];
+  const scored = PEPTIDES
+    .filter(p => !excluded.has(p.id) && (!noInj || p.routes.some(r => r !== 'inj')))
+    .map(p => ({p, s: (p.w[primary] || 0) * 3 + also.reduce((a, g) => a + (p.w[g] || 0), 0), hit: !!p.w[primary]}))
+    .filter(x => x.s > 0)
+    .sort((a, b) => b.s - a.s);
+
+  const n = answers.exp === 'new' ? 2 : 3;
+  const anchorIdx = scored.findIndex(x => x.hit);
+  let stack = [];
+  if (anchorIdx > -1) stack.push(scored.splice(anchorIdx, 1)[0]);
+  stack = stack.concat(scored.slice(0, n - stack.length));
+
+  const items = stack.map((x, k) => {
+    const g = goals.find(g => x.p.w[g] && x.p.why[g]);
+    const warn = [];
+    if (flags.includes('diab') && x.p.id === 'glp1') warn.push('You mentioned diabetes or glucose-lowering meds. Combined with a GLP-1, blood sugar can drop too low. This has to go through your doctor.');
+    if (flags.includes('diab') && ['cjcipa','tesa'].includes(x.p.id)) warn.push('Raising growth hormone can push blood sugar up. With diabetes, this needs your doctor’s input.');
+    if (x.p.tier === 'rx') warn.push('Prescription medication. Get it through a licensed provider, not a research supplier.');
+    return {p:x.p, anchor: k === 0 && x.hit, goal:g, routes: noInj ? x.p.routes.filter(r => r !== 'inj') : x.p.routes, warn};
+  });
+  if (anchorIdx === -1) notes.unshift(noInj
+    ? `Nothing well-researched for ${GOALS[primary].short} comes in a non-injection form, so this stack leans on your other goals.`
+    : `We couldn’t find a good match for ${GOALS[primary].short} with your safety answers, so this stack leans on your other goals.`);
+  return {items, notes};
+}
+
+function foundations(){
+  const out = [];
+  if (answers.sleep === 'poor') out.push(['Sleep first', 'Aim for 7–9 hours with a fixed wake time. No peptide outworks bad sleep.']);
+  else if (answers.sleep === 'ok') out.push(['Protect your sleep', 'Keep a consistent schedule. Most recovery happens in deep sleep.']);
+  if (answers.train === '0' || answers.train === '2') out.push(['Train more', 'Two to three strength sessions a week gives any stack something to work with.']);
+  if (['fat','muscle'].includes(answers.goal) || (answers.also || []).some(g => ['fat','muscle'].includes(g))) out.push(['Eat protein', 'Protein at every meal protects muscle whether you’re cutting or building.']);
+  out.push(['Get baseline labs', 'Bloodwork before you start means you can see what actually changes.']);
+  return out.slice(0, 4);
+}
+
+/* ---------- Analyze + results ---------- */
+function finish(){
+  idx = 'analyze';
+  const r = buildStack();
+  const sending = submitResults(r).catch(() => false);
+  const el = document.createElement('section');
+  const seq = 'GEPPPGKPADDAGLVMEHFPGP'.split('');
+  el.innerHTML = `<div class="analyze">
+    <p class="eyebrow">Building your match</p>
+    <h2 class="q-title">Reading the research for ${GOALS[answers.goal].short}</h2>
+    <div class="ribbon">${seq.map((c, k) => `<span class="bead ${CLS(c)}" style="animation-delay:${k * 55}ms">${c}</span>`).join('')}</div>
+    <p class="status" id="status" aria-live="polite">Weighing your goals…</p>
+  </div>`;
+  show(el);
+  const steps = ['Weighing your goals…', 'Checking your safety answers…', 'Grading the evidence…'];
+  let s = 0;
+  const tick = setInterval(() => { s++; const st = $('#status', el); if (st && steps[s]) st.textContent = steps[s]; }, 520);
+  clearTimeout(analyzeTimer);
+  analyzeTimer = setTimeout(() => { clearInterval(tick); idx = 'result'; show(renderResult(r, sending)); }, reduce ? 500 : 1650);
+}
+
+function renderBlock(b){
+  const el = document.createElement('section');
+  el.innerHTML = `<div class="block">
+    <p class="eyebrow">Before anything else</p>
+    <h2 class="res-title">${b.t}</h2>
+    <p class="res-lede">${b.d}</p>
+    <div class="res-actions"><button class="btn" type="button" id="restart-b">Start over</button></div>
+  </div>`;
+  $('#restart-b', el).onclick = restart;
+  return el;
+}
+
+function summaryText(r){
+  const lines = [`My Sequence match (goal: ${GOALS[answers.goal].label})`, ''];
+  r.items.forEach((it, k) => lines.push(`${k + 1}. ${it.p.name} (${TIERS[it.p.tier]}, ${it.routes.map(x => ROUTES[x]).join(' / ')})${it.goal ? ' — ' + it.p.why[it.goal] : ''}`));
+  lines.push('', 'Educational only. Not medical advice or dosing. Talk to a licensed clinician first.');
+  return lines.join('\n');
+}
+
+function renderResult(r, sending){
+  const el = document.createElement('section');
+  const g = GOALS[answers.goal];
+  const asks = [...new Set(r.items.map(it => it.p.ask).concat('Which baseline labs should I get before starting, and when should we recheck?'))];
+  const cards = r.items.map((it, k) => `
+    <article class="card ${it.anchor ? 'anchor' : ''}">
+      <p class="role">${it.anchor ? 'Anchor' : 'Support'} · ${String(k + 1).padStart(2, '0')}</p>
+      <div class="pep-head">
+        <div><p class="pep-name">${it.p.name}</p><p class="pep-aka">${it.p.aka}</p></div>
+        <span class="pill tier-${it.p.tier}">${TIERS[it.p.tier]}</span>
+      </div>
+      <div class="ribbon">${ribbonHTML(it.p.seq)}</div>
+      <p class="meta"><span>${it.p.len}</span><span>${it.routes.map(x => ROUTES[x]).join(' · ')}</span><span>${it.p.status}</span></p>
+      <dl class="why">
+        ${it.goal ? `<dt>Why you</dt><dd>${it.p.why[it.goal]}</dd>` : ''}
+        <dt>Research</dt><dd class="muted">${it.p.research}</dd>
+      </dl>
+      ${it.warn.map(w => `<p class="warn">${icon.warn}<span>${w}</span></p>`).join('')}
+    </article>`).join('');
+
+  el.innerHTML = `<div class="res">
+    <p class="eyebrow">Your match</p>
+    <h2 class="res-title">A stack for <em>${g.short}</em></h2>
+    <p class="sent" id="sent" aria-live="polite">Sending to ${OWNER}…</p>
+    <p class="res-lede">Based on the research, <strong>this may be a stack worth considering</strong> to help you reach your goal. It’s a starting point for a conversation with a clinician, not a plan to follow.</p>
+    ${r.notes.length ? `<div class="notes">${r.notes.map(n => `<p class="warn" style="margin:0">${icon.warn}<span>${n}</span></p>`).join('')}</div>` : ''}
+    <div class="stack">${cards || '<p class="res-lede">No match with your answers. A clinician can help you find the right path.</p>'}</div>
+    <div class="legend" aria-label="Sequence color key">
+      <span>Each chain is the peptide’s real amino acid sequence.</span>
+      <span><i class="bead c">K</i>Charged</span>
+      <span><i class="bead p">S</i>Polar</span>
+      <span><i class="bead h">L</i>Hydrophobic</span>
+      <span><i class="bead m">Cu</i>Modified</span>
+    </div>
+
+    <div class="section">
+      <h3>Bring these to your clinician</h3>
+      <ol class="asks">${asks.map((a, k) => `<li><span>${String(k + 1).padStart(2, '0')}</span>${a}</li>`).join('')}</ol>
+    </div>
+
+    <div class="section">
+      <h3>The foundation it sits on</h3>
+      <div class="found">${foundations().map(([t, d]) => `<div><b>${t}</b><p>${d}</p></div>`).join('')}</div>
+    </div>
+
+    <div class="disclaimer">
+      <b>Please read.</b> Sequence is an educational tool shared between friends. It isn’t medical advice, a diagnosis, or a prescription, and it doesn’t give dosing. Most peptides here are research compounds that aren’t FDA-approved for human use; purity and quality vary a lot between suppliers, and regulations change. Evidence grades reflect published research, not a promise of results. Talk with a licensed clinician before starting anything.
+    </div>
+
+    <div class="res-actions">
+      <button class="btn primary" type="button" id="copy">Copy my results</button>
+      <button class="btn" type="button" id="restart">Retake the quiz</button>
+    </div>
+    <div id="copy-slot"></div>
+  </div>`;
+
+  $('#restart', el).onclick = restart;
+  Promise.resolve(sending).then(ok => {
+    const s = $('#sent', el); if (!s) return;
+    if (ok){ s.classList.add('ok'); s.textContent = OWNER + ' has your results.'; }
+    else { s.classList.add('fail'); s.textContent = 'Couldn’t reach ' + OWNER + '. Copy your results below and text them to him.'; }
+  });
+  const copyBtn = $('#copy', el);
+  copyBtn.onclick = () => {
+    const text = summaryText(r);
+    const fallback = () => {
+      const slot = $('#copy-slot', el);
+      slot.innerHTML = '<textarea class="copyfall" id="copy-text" readonly aria-label="Your results"></textarea>';
+      const ta = $('#copy-text', slot); ta.value = text; ta.focus(); ta.select();
+      copyBtn.textContent = 'Select and copy below';
+    };
+    try {
+      navigator.clipboard.writeText(text).then(() => {
+        copyBtn.textContent = 'Copied';
+        setTimeout(() => { copyBtn.textContent = 'Copy my results'; }, 1800);
+      }, fallback);
+    } catch (e) { fallback(); }
+  };
+  return el;
+}
+
+function restart(){ answers = {}; contact = {name:'', email:'', address:'', consent:false}; clearTimeout(analyzeTimer); goQ(0, -1); }
+
+/* ---------- Ambient peptide chain ---------- */
+const cv = $('#chain'), ctx = cv.getContext('2d');
+let W = 0, H = 0, DPR = 1;
+function resize(){ DPR = Math.min(window.devicePixelRatio || 1, 2); W = cv.clientWidth; H = cv.clientHeight; cv.width = W * DPR; cv.height = H * DPR; ctx.setTransform(DPR, 0, 0, DPR, 0, 0); }
+resize(); addEventListener('resize', resize);
+const N = 30;
+const kinds = Array.from({length:N}, (_, i) => 'cph'[i * 7 % 3]);
+const col = {c:'226,196,141', p:'147,213,205', h:'237,242,240'};
+function draw(t){
+  ctx.clearRect(0, 0, W, H);
+  const pts = [];
+  for (let i = 0; i < N; i++){
+    const u = i / (N - 1);
+    const x = W * (-0.05 + 1.1 * u) + Math.sin(t * 0.00021 + i * 0.55) * 34;
+    const y = H * 0.62 + Math.sin(t * 0.00017 + u * 5.2) * H * 0.16 + Math.cos(t * 0.00013 + i * 0.8) * 22;
+    pts.push([x, y]);
+  }
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = 'rgba(196,222,217,.14)';
+  ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.stroke();
+  pts.forEach(([x, y], i) => {
+    const r = 5 + (i % 4 === 0 ? 3 : 0);
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r * 3.2);
+    g.addColorStop(0, `rgba(${col[kinds[i]]},.22)`); g.addColorStop(1, `rgba(${col[kinds[i]]},0)`);
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r * 3.2, 0, 7); ctx.fill();
+    ctx.fillStyle = `rgba(${col[kinds[i]]},.5)`; ctx.beginPath(); ctx.arc(x, y, r * .55, 0, 7); ctx.fill();
+  });
+  if (!reduce) requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+updateBar();
+})();
+</script>
+</body>
+</html>
