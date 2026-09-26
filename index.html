@@ -47,6 +47,9 @@ button{font:inherit;color:inherit}
   background:rgba(9,14,17,.55);backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);}
 .bar-inner{max-width:1120px;margin:0 auto;padding-inline:20px;height:60px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px}
 .brand{grid-column:2;justify-self:center;display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:800;font-size:1.3rem;letter-spacing:-.035em}
+.brand{background:none;border:0;padding:6px 8px;color:var(--text);cursor:pointer;border-radius:10px;transition:transform .1s ease-out, opacity .2s}
+.brand:hover{opacity:.85}
+.brand:active{transform:scale(.96)}
 .brand-mark{display:flex;gap:3px}
 .brand-mark i{width:7px;height:7px;border-radius:50%;background:var(--gold);display:block}
 .brand-mark i:nth-child(2){background:var(--ice)}
@@ -233,7 +236,7 @@ main{position:relative;z-index:1;padding-top:calc(60px + env(safe-area-inset-top
     <button class="back" id="back" type="button" hidden>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Back
     </button>
-    <span class="brand"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Sequence</span>
+    <button class="brand" id="home" type="button" aria-label="Sequence, back to start"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Sequence</button>
     <span class="count" id="count"></span>
   </div>
   <div class="progress"><span id="prog"></span></div>
@@ -453,6 +456,14 @@ function goIntro(){ idx = -1; const d = document.createElement('div'); d.innerHT
 function bindIntro(el){ $('#start', el) && ($('#start', el).onclick = () => goQ(0)); el.querySelectorAll('[data-seq]').forEach(r => r.innerHTML = ribbonHTML(r.dataset.seq.split(' '))); }
 bindIntro(cur);
 
+$('#home').onclick = () => {
+  if (idx === -1) return;
+  clearTimeout(analyzeTimer);
+  answers = {};
+  contact = {name:'', email:'', address:'', consent:false};
+  goIntro();
+};
+
 $('#back').onclick = () => {
   if (idx === 'contact') return goQ(QUESTIONS.length - 1, -1);
   if (typeof idx !== 'number') return;
@@ -671,7 +682,7 @@ function finish(){
   show(el);
   const steps = ['Weighing your goals…', 'Checking your safety answers…', 'Grading the evidence…'];
   let s = 0;
-  const tick = setInterval(() => { s++; const st = $('#status', el); if (st && steps[s]) st.textContent = steps[s]; }, 520);
+  const tick = setInterval(() => { if (cur !== el) return clearInterval(tick); s++; const st = $('#status', el); if (st && steps[s]) st.textContent = steps[s]; }, 520);
   clearTimeout(analyzeTimer);
   analyzeTimer = setTimeout(() => { clearInterval(tick); idx = 'result'; show(renderResult(r, sending)); }, reduce ? 500 : 1650);
 }
