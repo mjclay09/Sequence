@@ -27,8 +27,8 @@ a:hover{color:var(--text)}
 .nav .wrap{height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:800;font-size:1.25rem;letter-spacing:-.035em;color:var(--text);text-decoration:none}
 .brand img{width:34px;height:34px;display:block;flex:none;filter:drop-shadow(0 0 10px rgba(255,255,255,.12))}
-.wordmark{font-family:"Michroma","Geist",system-ui,sans-serif;font-weight:400;font-size:.74rem;line-height:1.1;letter-spacing:.2em;text-transform:uppercase;white-space:nowrap;text-align:left}
-.wordmark small{display:block;font-size:.62em;letter-spacing:.52em;color:var(--muted);margin-top:4px}
+.wordmark{font-family:var(--serif);font-weight:800;font-size:1.18rem;line-height:1;letter-spacing:-.035em;white-space:nowrap;text-align:left;font-variation-settings:"wdth" 92}
+.wordmark small{display:block;font-family:var(--mono);font-weight:500;font-size:.56rem;letter-spacing:.36em;text-transform:uppercase;color:var(--gold);margin-top:4px}
 .brand-mark{display:flex;gap:3px}
 .brand-mark i{width:7px;height:7px;border-radius:50%;background:var(--gold);display:block}
 .brand-mark i:nth-child(2){background:var(--ice)}
@@ -43,7 +43,7 @@ a:hover{color:var(--text)}
 .btn.lg{padding:15px 24px;font-size:1rem}
 .nav-links a{white-space:nowrap}
 .sm{display:none}
-@media (max-width:560px){.nav-links{gap:6px 14px}.wordmark{font-size:.58rem;letter-spacing:.14em}.brand{gap:8px}.brand img{width:28px;height:28px}.nav-links .hide-sm{display:none}.lg-only{display:none}.sm{display:inline}.nav .btn{padding:9px 14px}}
+@media (max-width:560px){.nav-links{gap:6px 14px}.wordmark{font-size:1.02rem}.brand{gap:8px}.brand img{width:28px;height:28px}.nav-links .hide-sm{display:none}.lg-only{display:none}.sm{display:inline}.nav .btn{padding:9px 14px}}
 
 /* Type */
 .eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ice);margin:0 0 16px}

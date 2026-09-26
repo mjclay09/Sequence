@@ -25,7 +25,7 @@ function ribbon(seq, max = 18) {
 }
 
 const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&family=Michroma&display=swap">`;
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&display=swap">`;
 
 function head({ title, description, path, jsonld = [], ogType = 'website' }) {
   const canon = SITE_URL ? `<link rel="canonical" href="${abs(path)}">\n<meta property="og:url" content="${abs(path)}">` : '';

@@ -14,7 +14,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&family=Michroma&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&display=swap">
 <style>
 :root{
   color-scheme: dark;
@@ -57,8 +57,8 @@ button{font:inherit;color:inherit}
 .brand:hover{opacity:.85}
 .brand:active{transform:scale(.96)}
 .brand img{width:34px;height:34px;display:block;flex:none;filter:drop-shadow(0 0 10px rgba(255,255,255,.12))}
-.wordmark{font-family:"Michroma","Geist",system-ui,sans-serif;font-weight:400;font-size:.74rem;line-height:1.1;letter-spacing:.2em;text-transform:uppercase;white-space:nowrap;text-align:left}
-.wordmark small{display:block;font-size:.62em;letter-spacing:.52em;color:var(--muted);margin-top:4px}
+.wordmark{font-family:var(--serif);font-weight:800;font-size:1.18rem;line-height:1;letter-spacing:-.035em;white-space:nowrap;text-align:left;font-variation-settings:"wdth" 92}
+.wordmark small{display:block;font-family:var(--mono);font-weight:500;font-size:.56rem;letter-spacing:.36em;text-transform:uppercase;color:var(--gold);margin-top:4px}
 .brand-mark{display:flex;gap:3px}
 .brand-mark i{width:7px;height:7px;border-radius:50%;background:var(--gold);display:block}
 .brand-mark i:nth-child(2){background:var(--ice)}
@@ -223,7 +223,7 @@ main{position:relative;z-index:1;padding-top:calc(60px + env(safe-area-inset-top
   .sample{max-width:480px}
 }
 @media (max-width:560px){
-  .wordmark{font-size:.62rem;letter-spacing:.16em}
+  .wordmark{font-size:1.06rem}
   .opts.two{grid-template-columns:1fr}
   .screen{padding-inline:16px;padding-block:28px 60px}
   .bar-inner{padding-inline:12px}
