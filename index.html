@@ -199,6 +199,10 @@ main{position:relative;z-index:1;padding-top:calc(60px + env(safe-area-inset-top
 .sent.fail{color:var(--rose)}
 .sent.fail::before{background:var(--rose)}
 .copyfall{width:100%;min-height:160px;margin-top:12px;background:var(--bg2);color:var(--text);border:1px solid var(--line-2);border-radius:14px;padding:12px;font-family:var(--mono);font-size:.78rem}
+.learn{display:inline-block;margin-top:16px;font-size:.9rem;color:var(--ice);text-underline-offset:3px}
+.learn:hover{color:var(--text)}
+.intro-learn{display:inline-flex;margin-top:18px;font-size:.92rem;color:var(--ice);text-underline-offset:3px}
+.intro-learn:hover{color:var(--text)}
 .notes{display:grid;gap:8px;margin:0 0 26px}
 
 /* Block */
@@ -261,6 +265,7 @@ main{position:relative;z-index:1;padding-top:calc(60px + env(safe-area-inset-top
             <li>Evidence grade for each</li>
             <li>Questions for your doctor</li>
           </ul>
+          <a class="intro-learn" href="/peptides/">New to peptides? Read Peptides Simplified →</a>
           <p class="fine">For education only. This is not medical advice, a prescription, or dosing guidance. Talk with a licensed clinician before you start anything.</p>
         </div>
         <div class="sample" aria-label="Example match">
@@ -328,67 +333,67 @@ const TIERS = {rx:'Approved Rx', human:'Limited human data', early:'Early resear
 const ROUTES = {inj:'Injection', oral:'Oral', nasal:'Nasal spray', topical:'Topical'};
 
 const PEPTIDES = [
-  {id:'tirz', name:'Tirzepatide', aka:'Zepbound · Mounjaro · dual GLP-1/GIP', seq:['Y','Aib','E','G','T','F','T','S','D','Y','S','I','Aib','L','D','K','I','A','Q','K','A','F','V','Q','W','L','I','A','G','G','P','S','S','G','A','P','P','P','S'], len:'39 aa', routes:['inj'], tier:'rx', status:'Prescription only',
+  {id:'tirz', slug:'tirzepatide', name:'Tirzepatide', aka:'Zepbound · Mounjaro · dual GLP-1/GIP', seq:['Y','Aib','E','G','T','F','T','S','D','Y','S','I','Aib','L','D','K','I','A','Q','K','A','F','V','Q','W','L','I','A','G','G','P','S','S','G','A','P','P','P','S'], len:'39 aa', routes:['inj'], tier:'rx', status:'Prescription only',
     w:{fat:5, longevity:1},
     research:'Works on two appetite hormones, GLP-1 and GIP. In a head-to-head trial it produced more weight loss than semaglutide: about 20% of body weight versus 14% over 72 weeks. Weekly injection.',
     why:{fat:'The most weight loss of any approved medication in head-to-head trials.', longevity:'Being studied for heart, sleep apnea and metabolic outcomes beyond weight.'},
     ask:'Is tirzepatide or semaglutide the better fit for my health history and goals?'},
-  {id:'sema', name:'Semaglutide', aka:'Wegovy · Ozempic · Rybelsus', seq:'HAEGTFTSDVSSYLEGQAAKEFIAWLVRGRG', len:'31 aa', routes:['inj','oral'], tier:'rx', status:'Prescription only',
+  {id:'sema', slug:'semaglutide', name:'Semaglutide', aka:'Wegovy · Ozempic · Rybelsus', seq:'HAEGTFTSDVSSYLEGQAAKEFIAWLVRGRG', len:'31 aa', routes:['inj','oral'], tier:'rx', status:'Prescription only',
     w:{fat:4, longevity:1},
     research:'A GLP-1 medication with the longest track record and years of large human trials. It curbs appetite and slows digestion, and has trial evidence for fewer heart attacks and strokes. Weekly injection or daily tablet.',
     why:{fat:'Strong human evidence for fat loss, with proven heart protection and a tablet option.', longevity:'Trial data shows fewer heart attacks and strokes in people with heart disease and excess weight.'},
     ask:'Is semaglutide or tirzepatide the better fit for my health history and goals?'},
-  {id:'tesa', name:'Tesamorelin', aka:'GHRH analog', seq:'YADAIFTNSYRKVLGQLSARKLLQDIMSRQQGESNQERGARARL', len:'44 aa', routes:['inj'], tier:'rx', status:'Prescription only',
+  {id:'tesa', slug:'tesamorelin', name:'Tesamorelin', aka:'GHRH analog', seq:'YADAIFTNSYRKVLGQLSARKLLQDIMSRQQGESNQERGARARL', len:'44 aa', routes:['inj'], tier:'rx', status:'Prescription only',
     w:{fat:3, muscle:1},
     research:'FDA-approved to reduce visceral belly fat in a specific patient group. It raises your own growth hormone output. Use for general fat loss is off-label.',
     why:{fat:'Targets deep belly fat specifically, with human trial data behind it.', muscle:'Raises your own growth hormone, which supports lean mass.'},
     ask:'Would tesamorelin make sense for belly fat, and how would we track IGF-1?'},
-  {id:'motsc', name:'MOTS-c', aka:'Mitochondrial peptide', seq:'MRWQEIGYIFYPRKLR', len:'16 aa', routes:['inj'], tier:'early', status:'Research compound',
+  {id:'motsc', slug:'mots-c', name:'MOTS-c', aka:'Mitochondrial peptide', seq:'MRWQEIGYIFYPRKLR', len:'16 aa', routes:['inj'], tier:'early', status:'Research compound',
     w:{fat:2, longevity:3},
     research:'A small peptide made by your mitochondria. Animal studies link it to better insulin sensitivity and exercise capacity. Human data is still very early.',
     why:{fat:'Studied for metabolic health and insulin sensitivity.', longevity:'One of the most-watched mitochondrial peptides in aging research.'},
     ask:'Is there any human data on MOTS-c that applies to someone like me?'},
-  {id:'cjcipa', name:'CJC-1295 + Ipamorelin', aka:'Growth hormone secretagogue pair', seq:['Aib','H','Nal','F','K'], len:'29 aa + 5 aa', routes:['inj'], tier:'human', status:'Research compound',
+  {id:'cjcipa', slug:'cjc-1295', name:'CJC-1295 + Ipamorelin', aka:'Growth hormone secretagogue pair', seq:['Aib','H','Nal','F','K'], len:'29 aa + 5 aa', routes:['inj'], tier:'human', status:'Research compound',
     w:{muscle:4, sleep:2, fat:1, longevity:1},
     research:'Two peptides that prompt your pituitary to release more of your own growth hormone. Small human studies show GH and IGF-1 rise. There is no long-term outcome data.',
     why:{muscle:'Raises natural GH output, which supports recovery and lean mass.', sleep:'Your biggest GH pulses happen in deep sleep, and this pair is studied around that window.', fat:'Higher GH can shift body composition toward lean mass.', longevity:'GH declines with age; this pair nudges your own output back up.'},
     ask:'Should I get IGF-1 and fasting glucose checked before and during?'},
-  {id:'bpc', name:'BPC-157', aka:'Body Protection Compound', seq:'GEPPPGKPADDAGLV', len:'15 aa', routes:['inj','oral'], tier:'early', status:'Research compound',
+  {id:'bpc', slug:'bpc-157', name:'BPC-157', aka:'Body Protection Compound', seq:'GEPPPGKPADDAGLV', len:'15 aa', routes:['inj','oral'], tier:'early', status:'Research compound',
     w:{heal:5, muscle:2},
     research:'A fragment of a protein found in gastric juice. Animal studies show faster healing of tendon, ligament, muscle and gut lining. Human data is very limited.',
     why:{heal:'The most talked-about peptide for tendon, ligament and gut repair.', muscle:'Studied for faster tissue recovery between hard sessions.'},
     ask:'Is there any reason BPC-157 wouldn’t be safe with my history or medications?'},
-  {id:'tb500', name:'TB-500', aka:'Thymosin β4 fragment', seq:'LKKTETQ', len:'7 aa', routes:['inj'], tier:'early', status:'Research compound',
+  {id:'tb500', slug:'tb-500', name:'TB-500', aka:'Thymosin β4 fragment', seq:'LKKTETQ', len:'7 aa', routes:['inj'], tier:'early', status:'Research compound',
     w:{heal:4, muscle:1},
     research:'A fragment of thymosin beta-4, a protein involved in cell migration and repair. Promising in animal injury models, with little human data.',
     why:{heal:'Often paired with BPC-157 in injury research for broader tissue repair.', muscle:'Studied for muscle and soft tissue recovery.'},
     ask:'Should I get this injury properly diagnosed, with imaging, first?'},
-  {id:'ghk', name:'GHK-Cu', aka:'Copper peptide', seq:['G','H','K','Cu'], len:'3 aa + copper', routes:['topical','inj'], tier:'human', status:'Cosmetic ingredient (topical)',
+  {id:'ghk', slug:'ghk-cu', name:'GHK-Cu', aka:'Copper peptide', seq:['G','H','K','Cu'], len:'3 aa + copper', routes:['topical','inj'], tier:'human', status:'Cosmetic ingredient (topical)',
     w:{skin:5, heal:2, longevity:2},
     research:'A copper-binding peptide found naturally in your blood. Human studies of topical creams show firmer skin and fewer fine lines. Injectable use is far less studied.',
     why:{skin:'The best-supported option here for skin quality and hair.', heal:'Supports collagen and wound healing in lab and animal work.', longevity:'Your levels drop with age; studied for skin and tissue renewal.'},
     ask:'Would a topical GHK-Cu product give me most of the benefit?'},
-  {id:'semax', name:'Semax', aka:'ACTH(4–10) analog', seq:'MEHFPGP', len:'7 aa', routes:['nasal'], tier:'human', status:'Research compound (Rx in Russia)',
+  {id:'semax', slug:'semax', name:'Semax', aka:'ACTH(4–10) analog', seq:'MEHFPGP', len:'7 aa', routes:['nasal'], tier:'human', status:'Research compound (Rx in Russia)',
     w:{focus:5},
     research:'A nasal peptide derived from ACTH. Prescribed in Russia for stroke recovery and cognition; Western clinical data is limited.',
     why:{focus:'The most-studied nasal peptide for focus and mental clarity.'},
     ask:'Could Semax interact with anything I take for mood or attention?'},
-  {id:'selank', name:'Selank', aka:'Tuftsin analog', seq:'TKPRPGP', len:'7 aa', routes:['nasal'], tier:'human', status:'Research compound (Rx in Russia)',
+  {id:'selank', slug:'selank', name:'Selank', aka:'Tuftsin analog', seq:'TKPRPGP', len:'7 aa', routes:['nasal'], tier:'human', status:'Research compound (Rx in Russia)',
     w:{focus:3, sleep:2},
     research:'A nasal peptide based on tuftsin, an immune peptide. Small Russian trials report lower anxiety without sedation.',
     why:{focus:'Studied for calm focus and stress relief without sedation.', sleep:'Lower anxiety at night can make it easier to fall asleep.'},
     ask:'Is Selank reasonable to try for stress alongside what I already do?'},
-  {id:'epitalon', name:'Epitalon', aka:'Epithalon', seq:'AEDG', len:'4 aa', routes:['inj'], tier:'early', status:'Research compound',
+  {id:'epitalon', slug:'epitalon', name:'Epitalon', aka:'Epithalon', seq:'AEDG', len:'4 aa', routes:['inj'], tier:'early', status:'Research compound',
     w:{longevity:4, sleep:2},
     research:'A four-amino-acid peptide studied in Russia for telomeres and the body clock. Mostly animal work and small human studies.',
     why:{longevity:'The classic longevity peptide, studied for telomeres and aging.', sleep:'Studied for restoring melatonin rhythm in older adults.'},
     ask:'What would we measure to know if this is doing anything?'},
-  {id:'dsip', name:'DSIP', aka:'Delta sleep-inducing peptide', seq:'WAGGDASGE', len:'9 aa', routes:['inj'], tier:'early', status:'Research compound',
+  {id:'dsip', slug:'dsip', name:'DSIP', aka:'Delta sleep-inducing peptide', seq:'WAGGDASGE', len:'9 aa', routes:['inj'], tier:'early', status:'Research compound',
     w:{sleep:3},
     research:'Discovered in the 1970s for its link to deep sleep. Results from small human studies are mixed.',
     why:{sleep:'Named for deep sleep, with mixed but interesting early data.'},
     ask:'Should I rule out sleep apnea or other causes first?'},
-  {id:'pt141', name:'PT-141', aka:'Bremelanotide', seq:['Nle','D','H','F','R','W','K'], len:'7 aa, cyclic', routes:['inj'], tier:'rx', status:'Rx for one use, off-label otherwise',
+  {id:'pt141', slug:'pt-141', name:'PT-141', aka:'Bremelanotide', seq:['Nle','D','H','F','R','W','K'], len:'7 aa, cyclic', routes:['inj'], tier:'rx', status:'Rx for one use, off-label otherwise',
     w:{libido:5},
     research:'FDA-approved for low sexual desire in premenopausal women. It works on the brain rather than blood flow. Can raise blood pressure and cause nausea.',
     why:{libido:'The only peptide here with approved human data for desire.'},
@@ -724,6 +729,7 @@ function renderResult(r, sending){
         <dt>Research</dt><dd class="muted">${it.p.research}</dd>
       </dl>
       ${it.warn.map(w => `<p class="warn">${icon.warn}<span>${w}</span></p>`).join('')}
+      <a class="learn" href="/peptides/${it.p.slug}/">What studies show about ${it.p.name} →</a>
     </article>`).join('');
 
   el.innerHTML = `<div class="res">

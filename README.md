@@ -1,28 +1,26 @@
-# Sequence Stack Finder
+# Sequence
 
-Peptide goal quiz. When a friend finishes, `/api/submit` emails you their name, email, mailing address, answers and stack through Resend.
-
-```
-index.html       the quiz (static, no build step)
-api/submit.js    Vercel serverless function that sends the email
-```
-
-## Deploy
-
-1. Push this folder to a new GitHub repo (e.g. `mjclay09/sequence`).
-2. In Vercel: Add New → Project → import the repo. Framework preset: **Other**. No build command.
-3. Settings → Environment Variables:
-   - `RESEND_API_KEY` — from resend.com/api-keys
-   - `NOTIFY_TO` — the inbox that gets results
-   - `NOTIFY_FROM` — optional, e.g. `Sequence <hello@yourdomain.com>` after verifying the domain in Resend
-4. Redeploy, finish the quiz once yourself, and check your inbox.
-
-Without `NOTIFY_FROM`, Resend's test sender (`onboarding@resend.dev`) is used. It only delivers to the email on your Resend account, so set `NOTIFY_TO` to that address or verify a domain.
-
-## Test locally
+Peptide goal quiz plus "Peptides Simplified", a plain-English peptide library.
 
 ```
-npm i -g vercel
-vercel dev
+index.html                 the quiz
+api/submit.js              emails you each finished quiz (Resend)
+peptides/                  generated library pages (commit these)
+scripts/peptides-data.mjs  library content: edit this
+scripts/build-learn.mjs    regenerates peptides/, robots.txt and sitemap.xml
 ```
-Put the same variables in `.env.local`.
+
+## Editing the library
+
+1. Edit `scripts/peptides-data.mjs`.
+2. Rebuild: `SITE_URL=https://yourdomain.com node scripts/build-learn.mjs`
+3. Commit and push. Vercel serves the files as-is, no build step.
+
+`SITE_URL` adds canonical URLs and writes `sitemap.xml`. Submit `https://yourdomain.com/sitemap.xml` in Google Search Console.
+
+## Email setup
+
+Vercel → Settings → Environment Variables:
+- `RESEND_API_KEY` from resend.com/api-keys
+- `NOTIFY_TO` the inbox that gets results
+- `NOTIFY_FROM` optional, e.g. `Sequence <hello@yourdomain.com>` after verifying the domain in Resend
