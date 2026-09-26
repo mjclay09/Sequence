@@ -5,7 +5,7 @@
 import { mkdirSync, writeFileSync, rmSync, existsSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { PEPTIDES, TIERS, TAGS, UPDATED, SITE_NAME } from './peptides-data.mjs';
+import { PEPTIDES, TIERS, TAGS, UPDATED, SITE_NAME, TAGLINE } from './peptides-data.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'peptides');
@@ -51,13 +51,13 @@ ${FONTS}
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta property="og:image" content="${abs('/assets/og-image.jpg')}">
 <link rel="stylesheet" href="/peptides/styles.css">
-${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
+${[{ '@context': 'https://schema.org', '@type': 'Organization', name: SITE_NAME, slogan: TAGLINE, logo: abs('/assets/icon-512.png'), ...(SITE_URL && { url: SITE_URL + '/' }) }, ...jsonld].map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
 </head>
 <body>`;
 }
 
 const nav = (current) => `<header class="nav"><div class="wrap">
-  <a class="brand" href="/" aria-label="The North Star home"><img src="/assets/north-star-mark.png" srcset="/assets/north-star-mark@2x.png 2x" width="34" height="34" alt=""><span class="wordmark">The North Star</span></a>
+  <a class="brand" href="/" aria-label="North Star Peptide home"><img src="/assets/north-star-mark.png" srcset="/assets/north-star-mark@2x.png 2x" width="34" height="34" alt=""><span class="wordmark">North Star<small>Peptide</small></span></a>
   <nav class="nav-links" aria-label="Main">
     <a href="/peptides/"${current === 'hub' ? ' aria-current="page"' : ''}><span class="lg-only">Peptides Simplified</span><span class="sm">Learn</span></a>
     <a class="calc-link" href="/calculator/"${current === 'calc' ? ' aria-current="page"' : ''}><span class="lg-only">Mixing calculator</span><span class="sm">Calculator</span></a>
@@ -66,7 +66,7 @@ const nav = (current) => `<header class="nav"><div class="wrap">
 </div></header>`;
 
 const footer = `<footer><div class="wrap">
-  <span>© ${new Date(UPDATED).getFullYear()} ${SITE_NAME}. Educational only, not medical advice.</span>
+  <span><b style="color:var(--text);font-weight:500">${SITE_NAME}</b> · ${TAGLINE}<br>© ${new Date(UPDATED).getFullYear()} ${SITE_NAME}. Educational only, not medical advice.</span>
   <span><a href="/peptides/">Peptides Simplified</a> · <a href="/calculator/">Mixing calculator</a> · <a href="/">Find my stack</a></span>
 </div></footer>`;
 
@@ -94,7 +94,7 @@ function hub() {
       <span class="more">What studies show →</span>
     </a>`).join('\n');
 
-  const description = 'What is a peptide, why is everyone talking about them, and what does the research actually show? Plain-English guides to BPC-157, semaglutide, tirzepatide, GHK-Cu and more.';
+  const description = 'Your compass for peptide research. What is a peptide, why is everyone talking about them, and what does the research actually show? Plain-English guides to BPC-157, semaglutide, tirzepatide, GHK-Cu and more.';
   const jsonld = [
     { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Peptides Simplified', description, dateModified: UPDATED, ...(SITE_URL && { url: abs('/peptides/') }),
       mainEntity: { '@type': 'ItemList', itemListElement: PEPTIDES.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: p.name, url: abs(`/peptides/${p.slug}/`) })) } },
@@ -107,7 +107,7 @@ ${nav('hub')}
   <section class="hero"><div class="wrap">
     <p class="eyebrow">Peptides Simplified</p>
     <h1>Peptides, explained <em>in plain English.</em></h1>
-    <p class="lede">What a peptide is, why they are suddenly everywhere, and <strong>what studies actually show</strong> for ${PEPTIDES.length} of the most talked-about ones. No hype, no jargon.</p>
+    <p class="lede"><strong>Your compass for peptide research.</strong> What a peptide is, why they are suddenly everywhere, and <strong>what studies actually show</strong> for ${PEPTIDES.length} of the most talked-about ones. No hype, no jargon.</p>
     <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn primary lg" href="#library">Look up a peptide</a><a class="btn lg" href="#what">What is a peptide?</a><a class="btn lg" href="/calculator/">Mixing calculator</a></div>
   </div></section>
 

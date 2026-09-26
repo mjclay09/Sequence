@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Answer 8 quick questions and get a research-graded peptide stack for your goal.">
+<meta name="description" content="Your compass for peptide research. Answer 8 quick questions and see which peptides the research points to for your goal, with the evidence graded.">
 <style>body{margin:0}</style>
-<title>The North Star · Peptide Stack Finder</title>
+<title>North Star Peptide · Your compass for peptide research</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<meta property="og:title" content="The North Star · Find your peptide stack">
+<meta property="og:title" content="North Star Peptide · Your compass for peptide research">
 <meta property="og:description" content="Answer 8 quick questions and see which peptides the research points to for your goal.">
 <meta property="og:image" content="/assets/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -57,7 +57,8 @@ button{font:inherit;color:inherit}
 .brand:hover{opacity:.85}
 .brand:active{transform:scale(.96)}
 .brand img{width:34px;height:34px;display:block;flex:none;filter:drop-shadow(0 0 10px rgba(255,255,255,.12))}
-.wordmark{font-family:"Michroma","Geist",system-ui,sans-serif;font-weight:400;font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;white-space:nowrap}
+.wordmark{font-family:"Michroma","Geist",system-ui,sans-serif;font-weight:400;font-size:.74rem;line-height:1.1;letter-spacing:.2em;text-transform:uppercase;white-space:nowrap;text-align:left}
+.wordmark small{display:block;font-size:.62em;letter-spacing:.52em;color:var(--muted);margin-top:4px}
 .brand-mark{display:flex;gap:3px}
 .brand-mark i{width:7px;height:7px;border-radius:50%;background:var(--gold);display:block}
 .brand-mark i:nth-child(2){background:var(--ice)}
@@ -250,7 +251,7 @@ main{position:relative;z-index:1;padding-top:calc(60px + env(safe-area-inset-top
     <button class="back" id="back" type="button" hidden>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Back
     </button>
-    <button class="brand" id="home" type="button" aria-label="The North Star, back to start"><img src="/assets/north-star-mark.png" srcset="/assets/north-star-mark@2x.png 2x" width="34" height="34" alt=""><span class="wordmark">The North Star</span></button>
+    <button class="brand" id="home" type="button" aria-label="North Star Peptide, back to start"><img src="/assets/north-star-mark.png" srcset="/assets/north-star-mark@2x.png 2x" width="34" height="34" alt=""><span class="wordmark">North Star<small>Peptide</small></span></button>
     <span class="count" id="count"></span>
   </div>
   <div class="progress"><span id="prog"></span></div>
@@ -624,7 +625,7 @@ function submitResults(r){
 /* ---------- Matching ---------- */
 function blockReason(){
   const f = answers.flags || [];
-  if (answers.age === 'u18') return {t:'This one’s for adults.', d:'The North Star is built for people 18 and over. If you’re curious about performance or recovery, a sports medicine doctor is a great place to start.'};
+  if (answers.age === 'u18') return {t:'This one’s for adults.', d:'North Star Peptide is built for people 18 and over. If you’re curious about performance or recovery, a sports medicine doctor is a great place to start.'};
   if (f.includes('preg')) return {t:'Let’s pause here.', d:'Peptides haven’t been studied for safety during pregnancy, breastfeeding, or while trying to conceive. Your OB or doctor is the right person to talk to.'};
   if (f.includes('cancer')) return {t:'Let’s pause here.', d:'Several of these peptides boost growth signals in the body, like growth hormone and new blood vessel formation. With a cancer history, that could carry real risk. Please talk with your oncologist before considering any of them.'};
   return null;
@@ -715,9 +716,9 @@ function renderBlock(b){
 }
 
 function summaryText(r){
-  const lines = [`My North Star match (goal: ${GOALS[answers.goal].label})`, ''];
+  const lines = [`My North Star Peptide match (goal: ${GOALS[answers.goal].label})`, ''];
   r.items.forEach((it, k) => lines.push(`${k + 1}. ${it.p.name} (${TIERS[it.p.tier]}, ${it.routes.map(x => ROUTES[x]).join(' / ')})${it.whyText ? ' — ' + it.whyText : ''}`));
-  lines.push('', 'Educational only. Not medical advice or dosing. Talk to a licensed clinician first.');
+  lines.push('', 'North Star Peptide · Your compass for peptide research.', 'Educational only. Not medical advice or dosing. Talk to a licensed clinician first.');
   return lines.join('\n');
 }
 
@@ -768,7 +769,7 @@ function renderResult(r, sending){
     </div>
 
     <div class="disclaimer">
-      <b>Please read.</b> The North Star is an educational tool shared between friends. It isn’t medical advice, a diagnosis, or a prescription, and it doesn’t give dosing. Most peptides here are research compounds that aren’t FDA-approved for human use; purity and quality vary a lot between suppliers, and regulations change. Evidence grades reflect published research, not a promise of results. Talk with a licensed clinician before starting anything.
+      <b>Please read.</b> North Star Peptide is an educational tool shared between friends. It isn’t medical advice, a diagnosis, or a prescription, and it doesn’t give dosing. Most peptides here are research compounds that aren’t FDA-approved for human use; purity and quality vary a lot between suppliers, and regulations change. Evidence grades reflect published research, not a promise of results. Talk with a licensed clinician before starting anything.
     </div>
 
     <div class="res-actions">

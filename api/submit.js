@@ -4,7 +4,7 @@
 // Environment variables (set in Vercel → Project → Settings → Environment Variables):
 //   RESEND_API_KEY  required  your Resend API key (re_...)
 //   NOTIFY_TO       required  where results go, e.g. you@example.com (comma-separate for several)
-//   NOTIFY_FROM     optional  sender, e.g. "The North Star <hello@yourdomain.com>" once your domain is verified in Resend.
+//   NOTIFY_FROM     optional  sender, e.g. "North Star Peptide <hello@yourdomain.com>" once your domain is verified in Resend.
 //                             Defaults to Resend's test sender, which can only deliver to your own Resend account email.
 
 const MAX_BODY = 20_000;
@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { RESEND_API_KEY, NOTIFY_TO, NOTIFY_FROM = 'The North Star <onboarding@resend.dev>' } = process.env;
+  const { RESEND_API_KEY, NOTIFY_TO, NOTIFY_FROM = 'North Star Peptide <onboarding@resend.dev>' } = process.env;
   if (!RESEND_API_KEY || !NOTIFY_TO) {
     console.error('Missing RESEND_API_KEY or NOTIFY_TO');
     return res.status(500).json({ error: 'Email is not set up yet' });
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
   const row = (k, v) => `<tr><td style="padding:8px 12px 8px 0;color:#667;vertical-align:top;white-space:nowrap">${esc(k)}</td><td style="padding:8px 0;color:#111">${v}</td></tr>`;
   const html = `<!doctype html><html><body style="margin:0;background:#f4f5f5;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5">
 <div style="max-width:600px;margin:0 auto;padding:28px 20px">
-  <p style="margin:0 0 4px;color:#889;font-size:12px;letter-spacing:.08em;text-transform:uppercase">The North Star · new match · ${esc(when)}</p>
+  <p style="margin:0 0 4px;color:#889;font-size:12px;letter-spacing:.08em;text-transform:uppercase">North Star Peptide · new match · ${esc(when)}</p>
   <h1 style="margin:0 0 20px;font-size:24px;color:#111">${esc(name)} wants a ${esc(goal.toLowerCase())} stack</h1>
   <div style="background:#fff;border-radius:12px;padding:18px 20px;margin-bottom:16px">
     <table style="border-collapse:collapse;width:100%">
@@ -77,10 +77,11 @@ export default async function handler(req, res) {
     <table style="border-collapse:collapse;width:100%;font-size:14px">${answers.map((x) => row(x.q, esc(x.a))).join('')}</table>
   </div>
   <p style="color:#99a;font-size:12px;margin:18px 0 0">They agreed to share these answers with you. Hit reply to write back to ${esc(name)}.</p>
+  <p style="color:#99a;font-size:12px;margin:8px 0 0">North Star Peptide · Your compass for peptide research.</p>
 </div></body></html>`;
 
   const text = [
-    `New North Star match: ${name} (${goal})`,
+    `New North Star Peptide match: ${name} (${goal})`,
     `Email: ${email}`,
     `Address: ${address}`,
     '',

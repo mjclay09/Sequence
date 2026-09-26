@@ -11,9 +11,9 @@ const FAQ = [
 
 export function calcPage({ head, nav, footer, esc, abs, SITE_URL, UPDATED }) {
   const title = 'Peptide Mixing Calculator: How Much Water and How Many Units to Draw';
-  const description = 'Free peptide reconstitution calculator. Enter your vial size and prescribed dose to see exactly how many units to draw, and the easiest amount of water to add.';
+  const description = 'Your compass for peptide research: a free peptide reconstitution calculator. Enter your vial size and prescribed dose to see exactly how many units to draw, and the easiest amount of water to add.';
   const jsonld = [
-    { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'The North Star Peptide Mixing Calculator', applicationCategory: 'HealthApplication', operatingSystem: 'Any', description, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }, ...(SITE_URL && { url: abs('/calculator/') }) },
+    { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'North Star Peptide Mixing Calculator', applicationCategory: 'HealthApplication', operatingSystem: 'Any', description, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }, ...(SITE_URL && { url: abs('/calculator/') }) },
     { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: FAQ.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
   ];
 
