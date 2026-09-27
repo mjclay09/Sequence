@@ -28,6 +28,8 @@
 .menu-item .arrow{color:var(--faint);font-size:1.1rem}
 .menu-item[aria-current="page"] .ic{background:var(--gold);border-color:transparent;color:var(--gold-ink)}
 .menu-item[aria-current="page"] .arrow{color:var(--gold)}
+button.menu-item{width:100%;font:inherit;text-align:left;background:none;border:0;cursor:pointer}
+.menu-help{margin:0 14px 10px;padding:12px 14px;border-radius:14px;background:var(--ice-soft);color:#CBEDE8;font-size:.88rem;line-height:1.45}
 .menu-foot{padding:12px 14px 8px;font-size:.8rem;color:var(--faint);border-top:1px solid var(--line);margin-top:6px}
 @media (max-width:560px){.menu-panel{top:calc(env(safe-area-inset-top,0px) + 76px)}}
 @media (prefers-reduced-motion:reduce){.menu-panel,.menu-panel.open{transform:none}.menu-btn i{transition:none}}

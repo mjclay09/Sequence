@@ -8,6 +8,12 @@
 <title>North Star Peptide · Your compass for peptide research</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="North Star">
+<meta name="theme-color" content="#090E11">
 <meta property="og:title" content="North Star Peptide · Your compass for peptide research">
 <meta property="og:description" content="Answer 8 quick questions and see which peptides the research points to for your goal.">
 <link rel="canonical" href="https://northstarpeptide.org/">
@@ -80,7 +86,7 @@ button{font:inherit;color:inherit}
 
 /* Stage */
 main{position:relative;z-index:1;padding-top:calc(76px + env(safe-area-inset-top,0px))}
-#stage{display:grid;min-height:calc(100vh - 76px)}
+#stage{display:grid;grid-template-columns:minmax(0,1fr);min-height:calc(100vh - 76px)}
 .screen{grid-area:1/1;padding-inline:20px;padding-block:40px 72px;will-change:transform,opacity}
 
 /* Intro */
@@ -170,7 +176,7 @@ main{position:relative;z-index:1;padding-top:calc(76px + env(safe-area-inset-top
 .res-title em{font-style:normal;background:linear-gradient(100deg,var(--gold),#F3E3C2 50%,var(--ice));-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.06em}
 .res-lede{color:var(--muted);font-weight:300;font-size:1.06rem;max-width:38em;margin:0 0 36px}
 .res-lede strong{color:var(--text);font-weight:500}
-.stack{display:grid;gap:14px;counter-reset:s}
+.stack{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;counter-reset:s}
 .card{border:1px solid var(--line);border-radius:24px;padding:24px;background:linear-gradient(165deg,rgba(255,255,255,.055),rgba(255,255,255,.012));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
 .card.anchor{border-color:rgba(226,196,141,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 30px 70px -40px rgba(226,196,141,.45)}
 .role{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 12px;display:flex;align-items:center;gap:10px}
@@ -209,8 +215,8 @@ main{position:relative;z-index:1;padding-top:calc(76px + env(safe-area-inset-top
 .consent{display:flex;gap:12px;align-items:flex-start;font-size:.9rem;color:var(--muted);cursor:pointer;line-height:1.45}
 .consent input{flex:none;width:20px;height:20px;margin:1px 0 0;accent-color:var(--gold)}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-.sent{display:inline-flex;align-items:center;gap:8px;font-size:.86rem;color:var(--muted);margin:0 0 26px}
-.sent::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--faint)}
+.sent{display:flex;align-items:baseline;gap:8px;max-width:100%;font-size:.86rem;color:var(--muted);margin:0 0 26px}
+.sent::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--faint)}
 .sent.ok::before{background:var(--ice)}
 .sent.fail{color:var(--rose)}
 .sent.fail::before{background:var(--rose)}
@@ -221,6 +227,15 @@ main{position:relative;z-index:1;padding-top:calc(76px + env(safe-area-inset-top
 .intro-learn{display:inline;margin-top:18px;font-size:.92rem;color:var(--ice);text-underline-offset:3px}
 .intro-learn:hover{color:var(--text)}
 .notes{display:grid;gap:8px;margin:0 0 26px}
+.welcome{border:1px solid rgba(226,196,141,.35);border-radius:22px;padding:18px 20px;margin:0 0 28px;background:linear-gradient(160deg,rgba(226,196,141,.1),rgba(147,213,205,.04));max-width:34em}
+.welcome-hi{margin:0;font-family:var(--serif);font-weight:800;font-size:1.35rem;letter-spacing:-.03em}
+.welcome-sub{margin:4px 0 14px;color:var(--muted);font-size:.92rem}
+.welcome-actions{display:flex;flex-wrap:wrap;gap:10px}
+.welcome .btn{padding:11px 18px;font-size:.92rem}
+.linkish{background:none;border:0;padding:0;margin-top:12px;color:var(--faint);font:inherit;font-size:.82rem;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.linkish:hover{color:var(--muted)}
+.privlink{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:-14px 0 26px;font-size:.86rem;color:var(--muted)}
+.privlink a{color:var(--ice);font-family:var(--mono);font-size:.8rem;min-width:0;overflow-wrap:anywhere}
 
 /* Block */
 .block{max-width:600px;margin:0 auto;padding-top:6vh}
@@ -444,6 +459,14 @@ let idx = -1;           // -1 intro, 0..n-1 questions, 'analyze' | 'result' | 'b
 let cur = $('#intro');
 const introHTML = cur.outerHTML;
 let analyzeTimer = null;
+const LS_KEY = 'nsp:last';
+const store = {
+  get(){ try { return JSON.parse(localStorage.getItem(LS_KEY) || 'null'); } catch (e) { return null; } },
+  set(v){ try { localStorage.setItem(LS_KEY, JSON.stringify(v)); } catch (e) {} },
+  clear(){ try { localStorage.removeItem(LS_KEY); } catch (e) {} }
+};
+const clone = (o) => JSON.parse(JSON.stringify(o || {}));
+const fmtDate = (t) => new Date(t).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
 
 function show(el, dir = 1){
   const stage = $('#stage');
@@ -482,7 +505,29 @@ function updateBar(){
 
 function goQ(i, dir = 1){ idx = i; show(renderQ(i), dir); }
 function goIntro(){ idx = -1; const d = document.createElement('div'); d.innerHTML = introHTML; const el = d.firstElementChild; el.removeAttribute('id'); bindIntro(el); show(el, -1); }
-function bindIntro(el){ $('#start', el) && ($('#start', el).onclick = () => goQ(0)); el.querySelectorAll('[data-seq]').forEach(r => r.innerHTML = ribbonHTML(r.dataset.seq.split(' '))); }
+function bindIntro(el){
+  $('#start', el) && ($('#start', el).onclick = () => goQ(0));
+  el.querySelectorAll('[data-seq]').forEach(r => r.innerHTML = ribbonHTML(r.dataset.seq.split(' ')));
+  const saved = store.get();
+  if (!saved || !saved.answers || !GOALS[saved.answers.goal]) return;
+  const w = document.createElement('div');
+  w.className = 'welcome';
+  w.innerHTML = `<p class="welcome-hi"></p><p class="welcome-sub"></p>
+    <div class="welcome-actions"><button class="btn primary" type="button" data-w="see">See my last stack</button><button class="btn" type="button" data-w="retake">Retake with my answers</button></div>
+    <button class="linkish" type="button" data-w="forget">Not you? Forget this device</button>`;
+  $('.welcome-hi', w).textContent = saved.name ? `Welcome back, ${saved.name.split(' ')[0]}.` : 'Welcome back.';
+  $('.welcome-sub', w).textContent = `Your last match: ${GOALS[saved.answers.goal].label} · ${fmtDate(saved.date)}`;
+  const col = $('.intro > div', el); col.insertBefore(w, col.firstChild);
+  w.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-w]'); if (!b) return;
+    const s = store.get(); if (!s) return w.remove();
+    if (b.dataset.w === 'forget'){ store.clear(); w.remove(); return; }
+    answers = clone(s.answers);
+    contact = {name: s.name || '', email: s.email || '', address: s.address || '', consent: false};
+    if (b.dataset.w === 'see'){ idx = 'result'; show(renderResult(buildStack(), null, {date: s.date, id: s.id})); }
+    else goQ(0);
+  });
+}
 bindIntro(cur);
 
 $('#home').onclick = () => {
@@ -517,6 +562,7 @@ function renderQ(i){
         <span class="opt-text"><span class="opt-label">${o.label}</span>${o.sub ? `<span class="opt-sub">${o.sub}</span>` : ''}</span>
         <span class="opt-check" aria-hidden="true"></span></button>`).join('')}
     </div>
+    ${q.type === 'single' && answers[q.id] ? `<div class="q-actions"><button type="button" class="btn" id="keep-${q.id}">Keep my answer ${icon.arrow}</button></div>` : ''}
     ${q.type === 'multi' ? `<div class="q-actions"><button type="button" class="btn primary" id="cont-${q.id}">Continue ${icon.arrow}</button>${q.optional ? '<span class="hint">Optional. Skip if nothing else matters right now.</span>' : ''}</div>` : ''}
     
   </div>`;
@@ -548,6 +594,7 @@ function renderQ(i){
   };
   buttons.forEach(b => b.addEventListener('click', () => choose(b)));
   if (cont) cont.onclick = () => next(i);
+  const keep = $(`#keep-${q.id}`, el); if (keep) keep.onclick = () => next(i);
   el._key = (e) => {
     const n = parseInt(e.key, 10);
     if (n >= 1 && n <= buttons.length && n <= 9){ choose(buttons[n-1]); buttons[n-1].focus(); }
@@ -630,10 +677,11 @@ function submitResults(r){
     goal: GOALS[answers.goal].label,
     answers: qa,
     stack: r.items.map(it => ({name: it.p.name, tier: TIERS[it.p.tier], routes: it.routes.map(x => ROUTES[x]).join(', '), why: it.whyText})),
-    notes: r.notes
+    notes: r.notes,
+    raw: answers
   };
   return fetch('/api/submit', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload), keepalive:true})
-    .then(res => res.ok);
+    .then(res => res.json().then(j => (res.ok ? j : false), () => res.ok ? {ok:true} : false));
 }
 
 /* ---------- Matching ---------- */
@@ -700,7 +748,10 @@ function foundations(){
 function finish(){
   idx = 'analyze';
   const r = buildStack();
+  const saved = {date: Date.now(), name: contact.name, email: contact.email, address: contact.address, answers: clone(answers), id: null};
+  store.set(saved);
   const sending = submitResults(r).catch(() => false);
+  sending.then(j => { if (j && j.id){ saved.id = j.id; store.set(saved); } });
   const el = document.createElement('section');
   const seq = 'GEPPPGKPADDAGLVMEHFPGP'.split('');
   el.innerHTML = `<div class="analyze">
@@ -736,7 +787,7 @@ function summaryText(r){
   return lines.join('\n');
 }
 
-function renderResult(r, sending){
+function renderResult(r, sending, meta){
   const el = document.createElement('section');
   const g = GOALS[answers.goal];
   const asks = [...new Set(r.items.map(it => it.p.ask).concat('Which baseline labs should I get before starting, and when should we recheck?'))];
@@ -760,7 +811,8 @@ function renderResult(r, sending){
   el.innerHTML = `<div class="res">
     <p class="eyebrow">Your match</p>
     <h2 class="res-title">A stack for <em>${g.short}</em></h2>
-    <p class="sent" id="sent" aria-live="polite">Sending to ${OWNER}…</p>
+    <p class="sent" id="sent" aria-live="polite">${meta ? 'Saved ' + fmtDate(meta.date) : 'Sending to ' + OWNER + '…'}</p>
+    <div class="privlink" id="privlink" hidden></div>
     <p class="res-lede">Based on the research, <strong>this may be a stack worth considering</strong> to help you reach your goal. It’s a starting point for a conversation with a clinician, not a plan to follow.</p>
     ${r.notes.length ? `<div class="notes">${r.notes.map(n => `<p class="warn" style="margin:0">${icon.warn}<span>${n}</span></p>`).join('')}</div>` : ''}
     <div class="stack">${cards || '<p class="res-lede">No match with your answers. A clinician can help you find the right path.</p>'}</div>
@@ -788,15 +840,38 @@ function renderResult(r, sending){
 
     <div class="res-actions">
       <button class="btn primary" type="button" id="copy">Copy my results</button>
-      <button class="btn" type="button" id="restart">Retake the quiz</button>
+      <button class="btn" type="button" id="restart">Retake with my answers</button>
+      <button class="btn" type="button" id="fresh">Start fresh</button>
     </div>
+    <button class="linkish" type="button" id="del" hidden>Delete my saved results</button>
     <div id="copy-slot"></div>
   </div>`;
 
-  $('#restart', el).onclick = restart;
-  Promise.resolve(sending).then(ok => {
+  $('#restart', el).onclick = () => { clearTimeout(analyzeTimer); goQ(0, -1); };
+  $('#fresh', el).onclick = restart;
+  const showLink = (id) => {
+    if (!id) return;
+    const url = location.origin + '/r/' + id, box = $('#privlink', el);
+    box.innerHTML = '<span>Your private link:</span> <a></a> <button class="linkish" type="button" style="margin:0">Copy</button>';
+    const a = $('a', box); a.href = '/r/' + id; a.textContent = url.replace(/^https?:\/\//, '');
+    $('button', box).onclick = (e) => { try { navigator.clipboard.writeText(url).then(() => { e.target.textContent = 'Copied'; }, () => {}); } catch (err) {} };
+    box.hidden = false;
+    const del = $('#del', el); del.hidden = false;
+    let armed = false;
+    del.onclick = () => {
+      if (!armed){ armed = true; del.textContent = 'Tap again to permanently delete'; return; }
+      fetch('/api/result?id=' + encodeURIComponent(id), {method:'DELETE'}).then(r => {
+        if (!r.ok) throw 0;
+        const s = store.get(); if (s && s.id === id) store.clear();
+        box.hidden = true; del.hidden = true;
+        const sent = $('#sent', el); sent.className = 'sent ok'; sent.textContent = 'Deleted. Your results are no longer saved.';
+      }).catch(() => { del.textContent = 'Couldn’t delete right now. Try again later.'; });
+    };
+  };
+  if (meta){ $('#sent', el).classList.add('ok'); showLink(meta.id); }
+  else Promise.resolve(sending).then(j => {
     const s = $('#sent', el); if (!s) return;
-    if (ok){ s.classList.add('ok'); s.textContent = OWNER + ' has your results.'; }
+    if (j){ s.classList.add('ok'); s.textContent = OWNER + ' has your results.' + (j.emailedLink ? ' We emailed your private link to ' + contact.email + '.' : ''); showLink(j.id); }
     else { s.classList.add('fail'); s.textContent = 'Couldn’t reach ' + OWNER + '. Copy your results below and text them to him.'; }
   });
   const copyBtn = $('#copy', el);
@@ -850,6 +925,29 @@ function draw(t){
   if (!reduce) requestAnimationFrame(draw);
 }
 requestAnimationFrame(draw);
+
+/* ---------- Private results link: /r/<id> ---------- */
+const route = location.pathname.match(/^\/r\/([A-Za-z0-9_-]{16})\/?$/);
+if (route){
+  const id = route[1];
+  idx = 'loading';
+  const load = document.createElement('section');
+  load.innerHTML = '<div class="analyze"><p class="eyebrow">Your saved results</p><h2 class="q-title">Opening your stack…</h2></div>';
+  show(load);
+  fetch('/api/result?id=' + id).then(r => r.ok ? r.json() : Promise.reject(r.status)).then(d => {
+    if (!d || !d.answers || !GOALS[d.answers.goal]) throw 0;
+    answers = clone(d.answers);
+    const prev = store.get(), date = Date.parse(d.created_at) || Date.now();
+    contact = {name: d.name || '', email: '', address: '', consent: false};
+    if (prev && prev.id === id){ contact.email = prev.email || ''; contact.address = prev.address || ''; }
+    else store.set({date, name: d.name || '', email: '', address: '', answers: clone(d.answers), id});
+    idx = 'result'; show(renderResult(buildStack(), null, {date, id}));
+  }).catch(() => {
+    const e = document.createElement('section');
+    e.innerHTML = '<div class="block"><p class="eyebrow">Saved results</p><h2 class="res-title">We couldn’t find that link.</h2><p class="res-lede">It may have been deleted, or the link got cut off. You can take the quiz again in about two minutes.</p><div class="res-actions"><a class="btn primary" href="/">Start the quiz</a></div></div>';
+    idx = 'block'; show(e);
+  });
+}
 updateBar();
 })();
 </script>

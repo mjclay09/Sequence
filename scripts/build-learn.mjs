@@ -49,6 +49,11 @@ ${canon}
 ${FONTS}
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="North Star">
 <meta property="og:image" content="${abs('/assets/og-image.jpg')}">
 <link rel="stylesheet" href="/peptides/styles.css">
 <link rel="stylesheet" href="/assets/menu.css">
@@ -266,7 +271,7 @@ for (const p of PEPTIDES) {
   mkdirSync(join(OUT, p.slug), { recursive: true });
   writeFileSync(join(OUT, p.slug, 'index.html'), page(p));
 }
-writeFileSync(join(ROOT, 'robots.txt'), `User-agent: *\nAllow: /\n${SITE_URL ? `Sitemap: ${SITE_URL}/sitemap.xml\n` : ''}`);
+writeFileSync(join(ROOT, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /r/\nDisallow: /api/\n${SITE_URL ? `Sitemap: ${SITE_URL}/sitemap.xml\n` : ''}`);
 if (SITE_URL) {
   const urls = ['/', '/peptides/', '/calculator/', ...PEPTIDES.map((p) => `/peptides/${p.slug}/`)];
   writeFileSync(join(ROOT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${SITE_URL}${u}</loc><lastmod>${UPDATED}</lastmod></url>`).join('\n')}\n</urlset>\n`);
