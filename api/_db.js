@@ -23,11 +23,14 @@ export function cleanAnswers(raw) {
 }
 
 async function rest(path, init = {}) {
-  const base = process.env.SUPABASE_URL.replace(/\/$/, '');
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  // Accept the URL with or without a trailing slash or /rest/v1 on the end.
+  const base = process.env.SUPABASE_URL.trim().replace(/\/+$/, '').replace(/\/rest\/v1$/, '');
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY.trim();
+  // New-style keys (sb_secret_...) go in the apikey header only; legacy JWT keys also need Authorization.
+  const auth = key.startsWith('sb_') ? {} : { Authorization: `Bearer ${key}` };
   const r = await fetch(`${base}/rest/v1/${path}`, {
     ...init,
-    headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', ...(init.headers || {}) },
+    headers: { apikey: key, ...auth, 'Content-Type': 'application/json', ...(init.headers || {}) },
   });
   const txt = await r.text();
   if (!r.ok) throw new Error(`Supabase ${r.status}: ${txt}`);
