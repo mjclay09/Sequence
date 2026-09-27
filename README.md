@@ -13,14 +13,14 @@ scripts/build-learn.mjs    regenerates peptides/, robots.txt and sitemap.xml
 ## Editing the library
 
 1. Edit `scripts/peptides-data.mjs`.
-2. Rebuild: `SITE_URL=https://yourdomain.com node scripts/build-learn.mjs`
+2. Rebuild: `SITE_URL=https://northstarpeptide.org node scripts/build-learn.mjs`
 3. Commit and push. Vercel serves the files as-is, no build step.
 
-`SITE_URL` adds canonical URLs and writes `sitemap.xml`. Submit `https://yourdomain.com/sitemap.xml` in Google Search Console.
+`SITE_URL` adds canonical URLs and writes `sitemap.xml`. Submit `https://northstarpeptide.org/sitemap.xml` in Google Search Console.
 
 ## Email setup
 
 Vercel → Settings → Environment Variables:
 - `RESEND_API_KEY` from resend.com/api-keys
 - `NOTIFY_TO` the inbox that gets results
-- `NOTIFY_FROM` optional, e.g. `North Star Peptide <hello@yourdomain.com>` after verifying the domain in Resend
+- `NOTIFY_FROM` optional, e.g. `North Star Peptide <hello@northstarpeptide.org>` after verifying the domain in Resend

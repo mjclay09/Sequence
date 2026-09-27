@@ -1,2 +1,3 @@
 User-agent: *
 Allow: /
+Sitemap: https://northstarpeptide.org/sitemap.xml

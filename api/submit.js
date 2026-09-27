@@ -4,7 +4,7 @@
 // Environment variables (set in Vercel → Project → Settings → Environment Variables):
 //   RESEND_API_KEY  required  your Resend API key (re_...)
 //   NOTIFY_TO       required  where results go, e.g. you@example.com (comma-separate for several)
-//   NOTIFY_FROM     optional  sender, e.g. "North Star Peptide <hello@yourdomain.com>" once your domain is verified in Resend.
+//   NOTIFY_FROM     optional  sender, e.g. "North Star Peptide <hello@northstarpeptide.org>" once your domain is verified in Resend.
 //                             Defaults to Resend's test sender, which can only deliver to your own Resend account email.
 
 const MAX_BODY = 20_000;
