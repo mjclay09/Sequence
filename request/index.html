@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ask for a Specific Peptide or Stack</title>
+<meta name="description" content="Already know what you want? Tell us the peptide or stack you have in mind and we’ll reach out personally.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#090E11">
+<link rel="canonical" href="https://northstarpeptide.org/request/">
+<meta property="og:url" content="https://northstarpeptide.org/request/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="North Star Peptide">
+<meta property="og:title" content="Ask for a Specific Peptide or Stack">
+<meta property="og:description" content="Already know what you want? Tell us the peptide or stack you have in mind and we’ll reach out personally.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ask for a Specific Peptide or Stack">
+<meta name="twitter:description" content="Already know what you want? Tell us the peptide or stack you have in mind and we’ll reach out personally.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&display=swap">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="North Star">
+<meta property="og:image" content="https://northstarpeptide.org/assets/og-image.jpg">
+<link rel="stylesheet" href="/peptides/styles.css">
+<link rel="stylesheet" href="/assets/menu.css">
+<script src="/assets/menu.js" defer></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"North Star Peptide","slogan":"Your compass for peptide research.","logo":"https://northstarpeptide.org/assets/icon-512.png","url":"https://northstarpeptide.org/"}</script>
+</head>
+<body>
+<style>
+.req{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:36px;align-items:start}
+@media (max-width:900px){.req{grid-template-columns:minmax(0,1fr)}}
+.panel{border:1px solid var(--line);border-radius:24px;padding:24px;background:var(--surface)}
+.field{display:grid;gap:7px;margin-bottom:16px}
+.field label,.flabel{font-size:.9rem;color:var(--muted)}
+.field label span,.flabel span{color:var(--faint)}
+.field input,.field textarea,.field select{width:100%;font:inherit;font-size:1rem;color:var(--text);background:var(--bg2);border:1px solid var(--line-2);border-radius:14px;padding:14px 16px}
+.field textarea{min-height:120px;resize:vertical}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--gold)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.two{grid-template-columns:1fr}}
+.pchips{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 18px}
+.pchip{font:inherit;font-size:.88rem;border:1px solid var(--line-2);background:transparent;color:var(--muted);border-radius:999px;padding:8px 14px;cursor:pointer;transition:background .2s,color .2s,transform .1s}
+.pchip:active{transform:scale(.96)}
+.pchip[aria-pressed="true"]{background:var(--gold);color:var(--gold-ink);border-color:transparent}
+.consent{display:flex;gap:12px;align-items:flex-start;font-size:.9rem;color:var(--muted);margin:6px 0 18px;cursor:pointer;line-height:1.45}
+.consent input{flex:none;width:20px;height:20px;margin:1px 0 0;accent-color:var(--gold)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.err{color:var(--rose);font-size:.9rem;margin:0 0 12px}
+.err:empty{display:none}
+.done{text-align:left}
+.done h2{margin-bottom:10px}
+.side h3{margin-top:0}
+.side ol{margin:0;padding-left:1.2em;color:var(--muted)}
+.side li{margin-bottom:10px}
+</style>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/" aria-label="North Star Peptide home"><img src="/assets/north-star-mark.png" srcset="/assets/north-star-mark@2x.png 2x" width="46" height="46" alt=""><span class="wordmark">North Star<small>Peptide</small></span></a>
+  <nav class="nav-links" aria-label="Main">
+    <a class="btn primary" href="/"><span class="lg-only">Find my stack</span><span class="sm">Quiz</span></a>
+    <button class="menu-btn" type="button" aria-label="Open menu"><i></i><i></i><i></i></button>
+  </nav>
+</div></header>
+<main>
+  <section class="hero" style="padding-bottom:20px"><div class="wrap">
+    <p class="eyebrow">Ask directly</p>
+    <h1>Know what you want? <em>Just ask.</em></h1>
+    <p class="lede">Skip the quiz. Tell us the <strong>peptide or stack</strong> you have in mind, and Mark will reach out to you personally.</p>
+  </div></section>
+
+  <section style="padding-top:0"><div class="wrap req">
+    <div class="panel" id="panel">
+      <form id="req-form" novalidate>
+        <p class="flabel">What are you interested in? <span>(tap any that apply)</span></p>
+        <div class="pchips" id="pchips"><button type="button" class="pchip" data-slug="semaglutide" aria-pressed="false">Semaglutide</button><button type="button" class="pchip" data-slug="tirzepatide" aria-pressed="false">Tirzepatide</button><button type="button" class="pchip" data-slug="retatrutide" aria-pressed="false">Retatrutide</button><button type="button" class="pchip" data-slug="tesamorelin" aria-pressed="false">Tesamorelin</button><button type="button" class="pchip" data-slug="cjc-1295" aria-pressed="false">CJC-1295</button><button type="button" class="pchip" data-slug="ipamorelin" aria-pressed="false">Ipamorelin</button><button type="button" class="pchip" data-slug="sermorelin" aria-pressed="false">Sermorelin</button><button type="button" class="pchip" data-slug="bpc-157" aria-pressed="false">BPC-157</button><button type="button" class="pchip" data-slug="tb-500" aria-pressed="false">TB-500</button><button type="button" class="pchip" data-slug="ghk-cu" aria-pressed="false">GHK-Cu</button><button type="button" class="pchip" data-slug="collagen-peptides" aria-pressed="false">Collagen peptides</button><button type="button" class="pchip" data-slug="semax" aria-pressed="false">Semax</button><button type="button" class="pchip" data-slug="selank" aria-pressed="false">Selank</button><button type="button" class="pchip" data-slug="epitalon" aria-pressed="false">Epitalon</button><button type="button" class="pchip" data-slug="dsip" aria-pressed="false">DSIP</button><button type="button" class="pchip" data-slug="mots-c" aria-pressed="false">MOTS-c</button><button type="button" class="pchip" data-slug="ss-31" aria-pressed="false">SS-31</button><button type="button" class="pchip" data-slug="pt-141" aria-pressed="false">PT-141</button><button type="button" class="pchip" data-slug="kisspeptin" aria-pressed="false">Kisspeptin</button><button type="button" class="pchip" data-slug="thymosin-alpha-1" aria-pressed="false">Thymosin alpha-1</button><button type="button" class="pchip" data-slug="kpv" aria-pressed="false">KPV</button><button type="button" class="pchip" data-slug="aod-9604" aria-pressed="false">AOD-9604</button></div>
+
+        <div class="field"><label for="r-msg">Tell us more <span>(the stack you’re after, your goal, questions)</span></label>
+          <textarea id="r-msg" maxlength="1500" placeholder="e.g. Looking for BPC-157 and TB-500 for a shoulder injury. Have used both before."></textarea></div>
+
+        <div class="two">
+          <div class="field"><label for="r-name">First name</label><input id="r-name" autocomplete="given-name" maxlength="80"></div>
+          <div class="field"><label for="r-email">Email</label><input id="r-email" type="email" inputmode="email" autocomplete="email" maxlength="120"></div>
+        </div>
+        <div class="field"><label for="r-addr">Mailing address</label><textarea id="r-addr" rows="3" style="min-height:0" autocomplete="street-address" maxlength="300" placeholder="Street, city, state, ZIP"></textarea></div>
+        <div class="hp" aria-hidden="true"><label for="r-company">Company</label><input id="r-company" tabindex="-1" autocomplete="off"></div>
+
+        <label class="consent" for="r-consent"><input type="checkbox" id="r-consent"><span>I’m 18 or older, and it’s okay for Mark to contact me about this request.</span></label>
+        <p class="err" id="r-err" role="alert"></p>
+        <button class="btn primary lg" type="submit" id="r-submit">Send my request</button>
+      </form>
+    </div>
+
+    <aside class="side">
+      <div class="panel">
+        <h3>What happens next</h3>
+        <ol>
+          <li>Your request goes straight to Mark.</li>
+          <li>He’ll reach out to you personally.</li>
+          <li>Nothing is shared with anyone else.</li>
+        </ol>
+        <p class="muted" style="margin:16px 0 0;font-size:.9rem">Not sure what you need? <a href="/">Take the 2-minute quiz</a> or browse <a href="/peptides/">Peptides Simplified</a>.</p>
+      </div>
+    </aside>
+  </div></section>
+
+  <section style="padding-top:0"><div class="wrap narrow">
+    <p class="disclaimer">North Star Peptide is an educational resource. It isn’t medical advice, a diagnosis, or a prescription. Talk with a licensed clinician before starting anything. Last reviewed 2026-09-26.</p>
+  </div></section>
+</main>
+<footer><div class="wrap">
+  <span><b style="color:var(--text);font-weight:500">North Star Peptide</b> · Your compass for peptide research.<br>© 2026 North Star Peptide. Educational only, not medical advice.</span>
+  <span><a href="/peptides/">Peptides Simplified</a> · <a href="/calculator/">Mixing calculator</a> · <a href="/">Find my stack</a></span>
+</div></footer>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const chips = [...document.querySelectorAll('.pchip')];
+  const pre = new URLSearchParams(location.search).get('p');
+  chips.forEach((c) => {
+    if (pre && c.dataset.slug === pre) c.setAttribute('aria-pressed', 'true');
+    c.addEventListener('click', () => c.setAttribute('aria-pressed', String(c.getAttribute('aria-pressed') !== 'true')));
+  });
+  // Prefill name/email from a previous visit on this device, if any.
+  try { const s = JSON.parse(localStorage.getItem('nsp:last') || 'null'); if (s) { $('r-name').value = s.name || ''; $('r-email').value = s.email || ''; $('r-addr').value = s.address || ''; } } catch (e) {}
+
+  $('req-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const err = $('r-err'), btn = $('r-submit');
+    const peptides = chips.filter((c) => c.getAttribute('aria-pressed') === 'true').map((c) => c.textContent);
+    const body = {
+      peptides, message: $('r-msg').value.trim(),
+      name: $('r-name').value.trim(), email: $('r-email').value.trim(), address: $('r-addr').value.trim(),
+      consent: $('r-consent').checked, company: $('r-company').value
+    };
+    if (!peptides.length && body.message.length < 3) { err.textContent = 'Pick a peptide or tell us what you’re looking for.'; return; }
+    if (!body.name) { err.textContent = 'Add your first name.'; $('r-name').focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) { err.textContent = 'Enter an email like you@example.com.'; $('r-email').focus(); return; }
+    if (body.address.length < 8) { err.textContent = 'Add your mailing address.'; $('r-addr').focus(); return; }
+    if (!body.consent) { err.textContent = 'Tick the box so Mark can contact you.'; return; }
+    err.textContent = ''; btn.disabled = true; btn.textContent = 'Sending…';
+    try {
+      const r = await fetch('/api/request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      if (!r.ok) throw 0;
+      const panel = $('panel');
+      panel.innerHTML = '<div class="done"><p class="eyebrow">Request sent</p><h2>Thanks, <span id="dn"></span>. Mark has it.</h2><p class="muted">He’ll reach out soon. In the meantime, you can read up in <a href="/peptides/">Peptides Simplified</a>.</p></div>';
+      $('dn').textContent = body.name.split(' ')[0];
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (x) {
+      btn.disabled = false; btn.textContent = 'Send my request';
+      err.textContent = 'Couldn’t send right now. Please try again in a minute.';
+    }
+  });
+})();
+</script>
+</body>
+</html>

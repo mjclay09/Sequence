@@ -39,4 +39,5 @@ async function rest(path, init = {}) {
 
 export const insertResult = (row) => rest('results', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify(row) });
 export const getResult = async (id) => (await rest(`results?id=eq.${encodeURIComponent(id)}&select=id,created_at,name,goal,answers&limit=1`))[0] || null;
+export const insertRequest = (row) => rest('requests', { method: 'POST', headers: { Prefer: 'return=minimal' }, body: JSON.stringify(row) });
 export const deleteResult = (id) => rest(`results?id=eq.${encodeURIComponent(id)}`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } });

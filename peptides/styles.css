@@ -146,6 +146,7 @@ section{padding-block:56px}
 .list{margin:0;padding-left:1.2em}
 .list li{margin-bottom:8px}
 .legal{border:1px solid var(--line);border-radius:16px;padding:16px 18px;background:rgba(0,0,0,.2)}
+.ask-line{margin:16px 0 0;color:var(--muted);font-size:.95rem}
 .related{display:flex;flex-wrap:wrap;gap:8px}
 .related a{border:1px solid var(--line-2);border-radius:999px;padding:8px 14px;text-decoration:none;color:var(--text);font-size:.9rem}
 .related a:hover{background:var(--surface-2)}

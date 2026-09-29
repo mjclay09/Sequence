@@ -252,6 +252,7 @@ ${nav()}
   ${related ? `<h2>Related peptides</h2><div class="related">${related}</div>` : ''}
 
   <div style="margin-top:48px">${cta}</div>
+  <p class="ask-line">Already know you want ${esc(p.name)}? <a href="/request/?p=${p.slug}">Ask Mark about it →</a></p>
   ${DISCLAIMER}
 </article></main>
 ${footer}
@@ -261,19 +262,22 @@ ${footer}
 }
 
 import { calcPage } from './calc-page.mjs';
+import { requestPage } from './request-page.mjs';
 // ---------- Write ----------
 mkdirSync(OUT, { recursive: true });
 for (const d of readdirSync(OUT, { withFileTypes: true })) if (d.isDirectory() && !bySlug[d.name]) rmSync(join(OUT, d.name), { recursive: true });
 writeFileSync(join(OUT, 'index.html'), hub());
 mkdirSync(join(ROOT, 'calculator'), { recursive: true });
 writeFileSync(join(ROOT, 'calculator', 'index.html'), calcPage({ head, nav, footer, esc, abs, SITE_URL, UPDATED }));
+mkdirSync(join(ROOT, 'request'), { recursive: true });
+writeFileSync(join(ROOT, 'request', 'index.html'), requestPage({ head, nav, footer, esc, PEPTIDES, UPDATED }));
 for (const p of PEPTIDES) {
   mkdirSync(join(OUT, p.slug), { recursive: true });
   writeFileSync(join(OUT, p.slug, 'index.html'), page(p));
 }
 writeFileSync(join(ROOT, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /r/\nDisallow: /api/\n${SITE_URL ? `Sitemap: ${SITE_URL}/sitemap.xml\n` : ''}`);
 if (SITE_URL) {
-  const urls = ['/', '/peptides/', '/calculator/', ...PEPTIDES.map((p) => `/peptides/${p.slug}/`)];
+  const urls = ['/', '/peptides/', '/calculator/', '/request/', ...PEPTIDES.map((p) => `/peptides/${p.slug}/`)];
   writeFileSync(join(ROOT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${SITE_URL}${u}</loc><lastmod>${UPDATED}</lastmod></url>`).join('\n')}\n</urlset>\n`);
 } else if (existsSync(join(ROOT, 'sitemap.xml'))) {
   console.warn('SITE_URL not set: left existing sitemap.xml untouched.');
