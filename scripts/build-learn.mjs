@@ -5,7 +5,7 @@
 import { mkdirSync, writeFileSync, rmSync, existsSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { PEPTIDES, TIERS, TAGS, UPDATED, SITE_NAME, TAGLINE } from './peptides-data.mjs';
+import { PEPTIDES, BLENDS, ASK_ONLY, TIERS, TAGS, UPDATED, SITE_NAME, TAGLINE } from './peptides-data.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'peptides');
@@ -16,13 +16,16 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 const clip = (s, n) => (s.length <= n ? s : s.slice(0, n - 1).replace(/\s+\S*$/, '') + '…');
 const bySlug = Object.fromEntries(PEPTIDES.map((p) => [p.slug, p]));
 
-const CLS = (ch) => (/^(Cu|Aib|Nal|Nle|Dmt|Hyp)$/.test(ch) ? 'm' : 'DEKRH'.includes(ch) ? 'c' : 'STNQYCG'.includes(ch) ? 'p' : 'h');
+const CLS = (ch) => (ch.length > 1 || /^(Cu)$/.test(ch) ? 'm' : 'DEKRH'.includes(ch) ? 'c' : 'STNQYCG'.includes(ch) ? 'p' : 'h');
 function ribbon(seq, max = 18) {
   if (!seq) return '';
   const t = Array.isArray(seq) ? seq : seq.split('');
   const shown = t.slice(0, max).map((x) => `<i class="bead ${CLS(x)}">${esc(x)}</i>`).join('');
   return `<div class="ribbon" aria-hidden="true">${shown}${t.length > max ? `<i class="bead more">+${t.length - max}</i>` : ''}</div>`;
 }
+
+const sizeLine = (z) => !z ? '' : [z.v && z.v.length && `Vials: ${z.v.join(', ')}`, z.c && z.c.length && `Capsules: ${z.c.join(', ')}`].filter(Boolean).join(' · ');
+const blendsFor = (slug) => BLENDS.filter((b) => b.parts.includes(slug));
 
 const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&display=swap">`;
@@ -97,10 +100,11 @@ function hub() {
       <div class="card-head"><div><h3>${esc(p.name)}</h3><p class="aka">${esc(p.aka)}</p></div><span class="pill tier-${p.tier}">${TIERS[p.tier].label}</span></div>
       ${ribbon(p.seq, 12)}
       <p>${esc(clip(p.short, 150))}</p>
+      ${p.sizes ? `<p class="sizes">${esc(sizeLine(p.sizes))}</p>` : ''}
       <span class="more">What studies show →</span>
     </a>`).join('\n');
 
-  const description = 'Your compass for peptide research. What is a peptide, why is everyone talking about them, and what does the research actually show? Plain-English guides to BPC-157, semaglutide, tirzepatide, GHK-Cu and more.';
+  const description = 'Your compass for peptide research. What is a peptide, why is everyone talking about them, and what does the research actually show? Plain-English guides to BPC-157, semaglutide, tirzepatide, GHK-Cu, NAD+, blends and more.';
   const jsonld = [
     { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Peptides Simplified', description, dateModified: UPDATED, ...(SITE_URL && { url: abs('/peptides/') }),
       mainEntity: { '@type': 'ItemList', itemListElement: PEPTIDES.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: p.name, url: abs(`/peptides/${p.slug}/`) })) } },
@@ -114,7 +118,7 @@ ${nav('hub')}
     <p class="eyebrow">Peptides Simplified</p>
     <h1>Peptides, explained <em>in plain English.</em></h1>
     <p class="lede"><strong>Your compass for peptide research.</strong> What a peptide is, why they are suddenly everywhere, and <strong>what studies actually show</strong> for ${PEPTIDES.length} of the most talked-about ones. No hype, no jargon.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn primary lg" href="#library">Look up a peptide</a><a class="btn lg" href="#what">What is a peptide?</a><a class="btn lg" href="/calculator/">Mixing calculator</a></div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn primary lg" href="#library">Look up a peptide</a><a class="btn lg" href="#blends">Blends</a><a class="btn lg" href="#what">What is a peptide?</a><a class="btn lg" href="/calculator/">Mixing calculator</a></div>
   </div></section>
 
   <section id="what"><div class="wrap split">
@@ -164,6 +168,20 @@ ${nav('hub')}
 ${cards}
     </div>
     <p class="empty" id="empty" hidden>No peptides match that. Try a different name or goal.</p>
+  </div></section>
+
+  <section id="blends"><div class="wrap">
+    <p class="eyebrow">Blends</p>
+    <h2>Peptide blends, explained</h2>
+    <p class="lede">A blend is two or more peptides mixed in one vial. The research is almost always on each peptide <strong>on its own</strong>, so read each part below. Combinations are rarely studied as a pair.</p>
+    <div class="grid blends">
+${BLENDS.map((b) => `      <div class="card blend" id="blend-${b.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}">
+        <div class="card-head"><div><h3>${esc(b.name)}</h3><p class="aka">${esc(b.sizes)}</p></div></div>
+        <p>${esc(b.blurb)}</p>
+        <p class="parts">${b.parts.map((x) => `<a href="/peptides/${x}/">${esc(bySlug[x].name)}</a>`).join('<span aria-hidden="true">+</span>')}</p>
+        <a class="more" href="/request/?b=${encodeURIComponent(b.name)}">Ask Mark about this blend →</a>
+      </div>`).join('\n')}
+    </div>
   </div></section>
 
   <section id="faq"><div class="wrap narrow faq">
@@ -229,6 +247,7 @@ ${nav()}
     <div><dt>Size</dt><dd>${esc(p.len)}</dd></div>
     <div><dt>How it is taken</dt><dd>${esc(p.routes)}</dd></div>
     <div><dt>Status</dt><dd>${esc(p.status)}</dd></div>
+    ${p.sizes ? `<div class="wide"><dt>Available sizes</dt><dd>${esc(sizeLine(p.sizes))}</dd></div>` : ''}
   </dl>
 
   <h2>What is it?</h2>
@@ -249,10 +268,14 @@ ${nav()}
   <h2>Common questions</h2>
   <div class="faq">${faq.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</div>
 
+  ${blendsFor(p.slug).length ? `<h2>Comes in these blends</h2><ul class="list">${blendsFor(p.slug).map((b) => `<li><a href="/peptides/#blend-${b.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}"><b>${esc(b.name)}</b></a> (${esc(b.sizes)}): ${b.parts.map((x) => esc(bySlug[x].name)).join(' + ')}</li>`).join('')}</ul>` : ''}
+
   ${related ? `<h2>Related peptides</h2><div class="related">${related}</div>` : ''}
 
   <div style="margin-top:48px">${cta}</div>
-  <p class="ask-line">Already know you want ${esc(p.name)}? <a href="/request/?p=${p.slug}">Ask Mark about it →</a></p>
+  ${!p.sizes ? '' : ASK_ONLY.includes(p.slug)
+    ? `<p class="ask-line">${esc(p.name)} isn’t part of the quiz suggestions. Experienced and want to talk about it? <a href="/request/?p=${p.slug}">Ask Mark directly →</a></p>`
+    : `<p class="ask-line">Already know you want ${esc(p.name)}? <a href="/request/?p=${p.slug}">Ask Mark about it →</a></p>`}
   ${DISCLAIMER}
 </article></main>
 ${footer}
@@ -270,7 +293,7 @@ writeFileSync(join(OUT, 'index.html'), hub());
 mkdirSync(join(ROOT, 'calculator'), { recursive: true });
 writeFileSync(join(ROOT, 'calculator', 'index.html'), calcPage({ head, nav, footer, esc, abs, SITE_URL, UPDATED }));
 mkdirSync(join(ROOT, 'request'), { recursive: true });
-writeFileSync(join(ROOT, 'request', 'index.html'), requestPage({ head, nav, footer, esc, PEPTIDES, UPDATED }));
+writeFileSync(join(ROOT, 'request', 'index.html'), requestPage({ head, nav, footer, esc, PEPTIDES, BLENDS, ASK_ONLY, UPDATED }));
 for (const p of PEPTIDES) {
   mkdirSync(join(OUT, p.slug), { recursive: true });
   writeFileSync(join(OUT, p.slug, 'index.html'), page(p));

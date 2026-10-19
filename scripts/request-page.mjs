@@ -1,8 +1,12 @@
 // "Ask for something specific" page: a short form that notifies Mark, who follows up personally.
-export function requestPage({ head, nav, footer, esc, PEPTIDES, UPDATED }) {
+export function requestPage({ head, nav, footer, esc, PEPTIDES, BLENDS = [], ASK_ONLY = [], UPDATED }) {
   const title = 'Ask for a Specific Peptide or Stack';
   const description = 'Already know what you want? Tell us the peptide or stack you have in mind and we’ll reach out personally.';
-  const chips = PEPTIDES.map((p) => `<button type="button" class="pchip" data-slug="${p.slug}" aria-pressed="false">${esc(p.name)}</button>`).join('');
+  const blendChips = BLENDS.map((b) => `<button type="button" class="pchip" data-blend="${esc(b.name)}" aria-pressed="false">${esc(b.name)}</button>`).join('');
+  const chip = (p) => `<button type="button" class="pchip" data-slug="${p.slug}" aria-pressed="false">${esc(p.name)}</button>`;
+  const carried = PEPTIDES.filter((p) => p.sizes);
+  const chips = carried.filter((p) => !ASK_ONLY.includes(p.slug)).map(chip).join('');
+  const askChips = carried.filter((p) => ASK_ONLY.includes(p.slug)).map(chip).join('');
 
   return `${head({ title, description, path: '/request/' })}
 <style>
@@ -45,6 +49,10 @@ ${nav('ask')}
       <form id="req-form" novalidate>
         <p class="flabel">What are you interested in? <span>(tap any that apply)</span></p>
         <div class="pchips" id="pchips">${chips}</div>
+        <p class="flabel">Ask-only <span>(not part of the quiz, for experienced folks)</span></p>
+        <div class="pchips">${askChips}</div>
+        <p class="flabel">Or a blend</p>
+        <div class="pchips">${blendChips}</div>
 
         <div class="field"><label for="r-msg">Tell us more <span>(the stack you’re after, your goal, questions)</span></label>
           <textarea id="r-msg" maxlength="1500" placeholder="e.g. Looking for BPC-157 and TB-500 for a shoulder injury. Have used both before."></textarea></div>
@@ -84,9 +92,9 @@ ${footer}
 (() => {
   const $ = (id) => document.getElementById(id);
   const chips = [...document.querySelectorAll('.pchip')];
-  const pre = new URLSearchParams(location.search).get('p');
+  const qs = new URLSearchParams(location.search), pre = qs.get('p'), preB = qs.get('b');
   chips.forEach((c) => {
-    if (pre && c.dataset.slug === pre) c.setAttribute('aria-pressed', 'true');
+    if ((pre && c.dataset.slug === pre) || (preB && c.dataset.blend === preB)) c.setAttribute('aria-pressed', 'true');
     c.addEventListener('click', () => c.setAttribute('aria-pressed', String(c.getAttribute('aria-pressed') !== 'true')));
   });
   // Prefill name/email from a previous visit on this device, if any.

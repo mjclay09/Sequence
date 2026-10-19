@@ -167,3 +167,11 @@ footer a{color:var(--muted)}
 @media (prefers-reduced-transparency:reduce){.nav{background:#0B1215;backdrop-filter:none;-webkit-backdrop-filter:none}}
 
 @media (max-width:380px){.nav-links .btn.primary{display:none}}
+/* Sizes + blends */
+.card p.sizes{font-family:var(--mono);font-size:.74rem;letter-spacing:.02em;color:var(--gold);margin-top:-2px}
+.facts .wide{grid-column:1/-1}
+.blend .parts{display:flex;flex-wrap:wrap;align-items:center;gap:6px;color:var(--faint)}
+.blend .parts a{border:1px solid var(--line-2);border-radius:999px;padding:5px 11px;font-size:.84rem;color:var(--text);text-decoration:none}
+.blend .parts a:hover{background:var(--surface-2)}
+.blend{scroll-margin-top:110px}
+.blend .more{text-decoration:none}

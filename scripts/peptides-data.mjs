@@ -3,7 +3,7 @@
 
 export const SITE_NAME = 'North Star Peptide';
 export const TAGLINE = 'Your compass for peptide research.';
-export const UPDATED = '2026-09-26';
+export const UPDATED = '2026-10-19';
 
 export const TIERS = {
   rx: { label: 'Approved Rx', blurb: 'An FDA-approved prescription medicine, backed by large human trials.' },
@@ -21,9 +21,13 @@ export const TAGS = {
   longevity: 'Aging & longevity',
   libido: 'Libido',
   immune: 'Immune & gut',
+  hormones: 'Hormones & fertility',
 };
 
-export const PEPTIDES = [
+import { MORE, SIZES, BLENDS, ASK_ONLY } from './peptides-more.mjs';
+export { BLENDS, ASK_ONLY };
+
+const CORE = [
   {
     slug: 'semaglutide', name: 'Semaglutide', aka: 'Ozempic, Wegovy, Rybelsus', tier: 'rx', status: 'FDA-approved prescription',
     tags: ['weight', 'longevity'], seq: 'HAEGTFTSDVSSYLEGQAAKEFIAWLVRGRG', len: '31 amino acids', routes: 'Weekly injection or daily tablet',
@@ -37,7 +41,7 @@ export const PEPTIDES = [
     unknown: ['Most people regain much of the weight after stopping.', 'Very long-term effects past a decade are still being studied.'],
     cautions: ['Nausea, vomiting, diarrhea and constipation are common, especially early on.', 'Rare risks include pancreatitis and gallbladder problems.', 'Not for people with a personal or family history of medullary thyroid cancer or MEN2.'],
     legal: 'FDA-approved. Available only with a prescription.',
-    related: ['tirzepatide', 'retatrutide', 'tesamorelin'],
+    related: ['tirzepatide', 'retatrutide', 'tesamorelin', 'liraglutide', 'cagrilintide'],
   },
   {
     slug: 'tirzepatide', name: 'Tirzepatide', aka: 'Mounjaro, Zepbound', tier: 'rx', status: 'FDA-approved prescription',
@@ -52,7 +56,7 @@ export const PEPTIDES = [
     unknown: ['How well weight stays off after stopping.', 'Whether it protects the heart as strongly as semaglutide has shown. Those trials are still reporting.'],
     cautions: ['Stomach side effects like nausea and diarrhea are common.', 'Same thyroid cancer warning as semaglutide.', 'Can make birth control pills less reliable for a while after starting or raising the dose.'],
     legal: 'FDA-approved. Available only with a prescription.',
-    related: ['semaglutide', 'retatrutide', 'mots-c'],
+    related: ['semaglutide', 'retatrutide', 'mots-c', 'cagrilintide'],
   },
   {
     slug: 'retatrutide', name: 'Retatrutide', aka: '"GLP-3", triple agonist', tier: 'human', status: 'Investigational, not approved',
@@ -83,10 +87,10 @@ export const PEPTIDES = [
     related: ['cjc-1295', 'sermorelin', 'ipamorelin'],
   },
   {
-    slug: 'cjc-1295', name: 'CJC-1295', aka: 'Modified GRF(1-29), often paired with ipamorelin', tier: 'human', status: 'Compounded only, not approved',
+    slug: 'cjc-1295', name: 'CJC-1295', aka: 'With or without DAC; Mod GRF(1-29), often paired with ipamorelin', tier: 'human', status: 'Compounded only, not approved',
     tags: ['muscle', 'sleep', 'longevity'], seq: 'YADAIFTQSYRKVLAQLSARKLLQDILSR', len: '29 amino acids', routes: 'Injection',
     short: 'A lab-made signal that nudges your body to release more growth hormone for days at a time.',
-    what: 'CJC-1295 is a modified version of the body’s growth-hormone-releasing signal (GHRH), built to last much longer in the blood.',
+    what: 'CJC-1295 is a modified version of the body’s growth-hormone-releasing signal (GHRH). It comes in two forms. “With DAC” has an add-on that lets it hitch a ride on blood proteins, so it lasts about a week. “No DAC” (also called modified GRF 1-29) lasts about 30 minutes and gives a short, more natural pulse, which is why it is the version usually paired with ipamorelin.',
     studies: [
       ['human', 'In small studies of healthy adults, one injection raised growth hormone levels several times over and kept IGF-1 higher for about a week or more.'],
     ],
@@ -107,7 +111,7 @@ export const PEPTIDES = [
     unknown: ['Whether it improves muscle, fat or sleep in healthy adults. There are no solid trials on that.'],
     cautions: ['Headache, flushing and increased hunger are reported.', 'Banned in sport by WADA.'],
     legal: 'Not FDA-approved. Included in the 2026 HHS plan to allow compounding with a prescription.',
-    related: ['cjc-1295', 'sermorelin', 'tesamorelin'],
+    related: ['cjc-1295', 'sermorelin', 'tesamorelin', 'ghrp-2', 'ghrp-6'],
   },
   {
     slug: 'sermorelin', name: 'Sermorelin', aka: 'GRF(1-29)', tier: 'human', status: 'Compounded, formerly approved',
@@ -165,7 +169,7 @@ export const PEPTIDES = [
     unknown: ['Whether injecting it does anything that creams do not.', 'How much it helps hair growth. The evidence is thin.'],
     cautions: ['Creams are generally well tolerated.', 'Injected versions are much less studied.'],
     legal: 'Legal as a cosmetic ingredient. Injectable forms are included in the 2026 HHS compounding plan.',
-    related: ['collagen-peptides', 'bpc-157'],
+    related: ['collagen-peptides', 'bpc-157', 'snap-8', 'glutathione'],
   },
   {
     slug: 'collagen-peptides', name: 'Collagen peptides', aka: 'Hydrolyzed collagen', tier: 'human', status: 'Dietary supplement',
@@ -193,7 +197,7 @@ export const PEPTIDES = [
     unknown: ['There are almost no large Western trials.', 'Whether it improves focus in healthy people.'],
     cautions: ['Nasal irritation is the most common complaint.'],
     legal: 'Not FDA-approved. Included in the 2026 HHS compounding plan and reviewed by an FDA advisory committee in July 2026.',
-    related: ['selank', 'dsip'],
+    related: ['selank', 'dsip', 'pinealon'],
   },
   {
     slug: 'selank', name: 'Selank', aka: 'Tuftsin analog', tier: 'human', status: 'Research compound (Rx in Russia)',
@@ -221,7 +225,7 @@ export const PEPTIDES = [
     unknown: ['Almost all research comes from one group and has not been independently repeated.', 'Whether it extends life in people.'],
     cautions: ['Very little human safety data.'],
     legal: 'Not FDA-approved. Reviewed for insomnia by an FDA advisory committee in July 2026.',
-    related: ['mots-c', 'dsip', 'ss-31'],
+    related: ['mots-c', 'dsip', 'ss-31', 'pinealon', 'thymalin'],
   },
   {
     slug: 'dsip', name: 'DSIP', aka: 'Delta sleep-inducing peptide, emideltide', tier: 'early', status: 'Research compound, under FDA review',
@@ -249,7 +253,7 @@ export const PEPTIDES = [
     unknown: ['Whether taking it does anything in people.'],
     cautions: ['Very little human safety data.'],
     legal: 'Not FDA-approved. Reviewed by an FDA advisory committee in July 2026 for obesity and osteoporosis.',
-    related: ['ss-31', 'epitalon', 'semaglutide'],
+    related: ['ss-31', 'epitalon', 'semaglutide', 'nad-plus', 'slu-pp-332'],
   },
   {
     slug: 'ss-31', name: 'SS-31', aka: 'Elamipretide, Forzinity', tier: 'rx', status: 'FDA-approved for one rare disease',
@@ -276,11 +280,11 @@ export const PEPTIDES = [
     unknown: ['How well it works in men. Studies are small.'],
     cautions: ['Nausea is common, affecting about 4 in 10 people in trials.', 'It can briefly raise blood pressure.', 'Repeated use can darken patches of skin.'],
     legal: 'FDA-approved for premenopausal women with low sexual desire. Other uses are off-label.',
-    related: ['kisspeptin'],
+    related: ['kisspeptin', 'melanotan-2'],
   },
   {
     slug: 'kisspeptin', name: 'Kisspeptin', aka: 'Kisspeptin-10', tier: 'human', status: 'Research compound',
-    tags: ['libido'], seq: 'YNWNSFGLRF', len: '10 amino acids (short form)', routes: 'Injection or infusion (in studies)',
+    tags: ['libido', 'hormones'], seq: 'YNWNSFGLRF', len: '10 amino acids (short form)', routes: 'Injection or infusion (in studies)',
     short: 'The master switch for reproductive hormones, now being studied for fertility and desire.',
     what: 'Kisspeptin sits at the top of the hormone chain that controls testosterone, estrogen and fertility.',
     studies: [
@@ -290,7 +294,7 @@ export const PEPTIDES = [
     unknown: ['Whether it works as a real-world treatment for low libido.'],
     cautions: ['Mostly short hospital studies so far.'],
     legal: 'Not FDA-approved.',
-    related: ['pt-141'],
+    related: ['pt-141', 'hcg', 'oxytocin'],
   },
   {
     slug: 'thymosin-alpha-1', name: 'Thymosin alpha-1', aka: 'Tα1, Zadaxin', tier: 'human', status: 'Approved abroad, not in the US',
@@ -304,7 +308,7 @@ export const PEPTIDES = [
     unknown: ['Whether it helps healthy people with "immune support".'],
     cautions: ['Generally well tolerated in trials.'],
     legal: 'Not FDA-approved. Included in the 2026 HHS compounding plan.',
-    related: ['kpv', 'bpc-157'],
+    related: ['kpv', 'bpc-157', 'thymalin', 'll-37'],
   },
   {
     slug: 'kpv', name: 'KPV', aka: 'Alpha-MSH fragment', tier: 'early', status: 'Research compound, under FDA review',
@@ -318,7 +322,7 @@ export const PEPTIDES = [
     unknown: ['There are no real human trials yet.'],
     cautions: ['Unknown in people.'],
     legal: 'Not FDA-approved. Reviewed by an FDA advisory committee in July 2026 for wound healing and inflammation.',
-    related: ['bpc-157', 'thymosin-alpha-1'],
+    related: ['bpc-157', 'thymosin-alpha-1', 'll-37'],
   },
   {
     slug: 'aod-9604', name: 'AOD-9604', aka: 'HGH fragment 176-191', tier: 'human', status: 'Research compound',
@@ -335,3 +339,8 @@ export const PEPTIDES = [
     related: ['semaglutide', 'tesamorelin'],
   },
 ];
+
+// Every entry, with the sizes Mark carries attached. Alphabetical by name for the library.
+export const PEPTIDES = [...CORE, ...MORE]
+  .map((p) => ({ ...p, sizes: SIZES[p.slug] || null }))
+  .sort((a, b) => a.name.localeCompare(b.name, 'en', { numeric: true }));
