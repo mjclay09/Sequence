@@ -1,7 +1,7 @@
 // North Star Peptide service worker: makes the site installable and keeps it working offline.
 // Pages: network first (always fresh when online), cached copy when offline.
 // Assets: cache first. Never touches /api/ or private /r/ links.
-const VERSION = 'nsp-v1';
+const VERSION = 'nsp-v2';
 const CORE = ['/', '/peptides/', '/calculator/', '/peptides/styles.css', '/assets/menu.css', '/assets/menu.js', '/assets/north-star-mark.png', '/assets/north-star-mark@2x.png', '/assets/icon-192.png'];
 
 self.addEventListener('install', (e) => {

@@ -174,7 +174,7 @@
     <h2>Common questions</h2>
     <div class="faq"><details><summary>How much bacteriostatic water should I add to my peptide vial?</summary><p>Any amount works. The water only changes how concentrated the liquid is, not how much peptide is in the vial. Pick an amount that makes your prescribed dose easy to measure, ideally a whole number of units between about 10 and 50 on a 100-unit syringe. The calculator shows the easiest option for your numbers.</p></details><details><summary>What does 1 unit mean on an insulin syringe?</summary><p>On a standard U-100 insulin syringe, 100 units equals 1 mL, so 1 unit is 0.01 mL. A 30-unit syringe holds 0.3 mL and a 50-unit syringe holds 0.5 mL.</p></details><details><summary>How do I convert mcg to units?</summary><p>First work out the concentration: milligrams in the vial divided by milliliters of water. Convert your dose to milligrams (1,000 mcg = 1 mg), divide it by the concentration to get milliliters, then multiply by 100 to get units on a U-100 syringe.</p></details><details><summary>How many doses are in my vial?</summary><p>Divide the amount in the vial by your dose, using the same unit for both. A 10 mg vial holds 20 doses of 500 mcg. In practice you may get slightly fewer because a little liquid stays in the vial.</p></details><details><summary>Does adding more water make a peptide weaker?</summary><p>Each unit on the syringe holds less peptide, but the total in the vial stays the same. You just draw more units to get the same dose.</p></details></div>
 
-    <p class="disclaimer">This calculator only converts your own numbers. It does not recommend peptides or doses, and it is not medical advice. Always use the dose and instructions from your prescriber or pharmacy, and confirm your math with a pharmacist. Last reviewed 2026-09-26.</p>
+    <p class="disclaimer">This calculator only converts your own numbers. It does not recommend peptides or doses, and it is not medical advice. Always use the dose and instructions from your prescriber or pharmacy, and confirm your math with a pharmacist. Last reviewed 2026-10-19.</p>
   </div></section>
 </main>
 <footer><div class="wrap">
@@ -265,6 +265,12 @@
   }));
   ['vial', 'water'].forEach((k) => $(k).addEventListener('input', () => { st[k] = parseFloat($(k).value) || 0; sync(true); render(); }));
   $('dose').addEventListener('input', () => { st.dose = parseFloat($('dose').value) || 0; render(); });
+  // Arriving from a peptide page: /calculator/?vial=10&water=2&name=BPC-157
+  const qs = new URLSearchParams(location.search);
+  const qv = parseFloat(qs.get('vial')), qw = parseFloat(qs.get('water')), qn = (qs.get('name') || '').slice(0, 40);
+  if (qv > 0 && qv < 10000) st.vial = qv;
+  if (qw > 0 && qw <= 10) st.water = qw;
+  if (qn) { const h = document.querySelector('.hero h1'); const tag = document.createElement('p'); tag.className = 'eyebrow'; tag.style.marginTop = '14px'; tag.textContent = 'Mixing ' + qn + ' · ' + st.vial + ' mg vial'; h.after(tag); }
   sync(); render();
 })();
 </script>

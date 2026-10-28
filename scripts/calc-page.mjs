@@ -242,6 +242,12 @@ ${footer}
   }));
   ['vial', 'water'].forEach((k) => $(k).addEventListener('input', () => { st[k] = parseFloat($(k).value) || 0; sync(true); render(); }));
   $('dose').addEventListener('input', () => { st.dose = parseFloat($('dose').value) || 0; render(); });
+  // Arriving from a peptide page: /calculator/?vial=10&water=2&name=BPC-157
+  const qs = new URLSearchParams(location.search);
+  const qv = parseFloat(qs.get('vial')), qw = parseFloat(qs.get('water')), qn = (qs.get('name') || '').slice(0, 40);
+  if (qv > 0 && qv < 10000) st.vial = qv;
+  if (qw > 0 && qw <= 10) st.water = qw;
+  if (qn) { const h = document.querySelector('.hero h1'); const tag = document.createElement('p'); tag.className = 'eyebrow'; tag.style.marginTop = '14px'; tag.textContent = 'Mixing ' + qn + ' · ' + st.vial + ' mg vial'; h.after(tag); }
   sync(); render();
 })();
 </script>

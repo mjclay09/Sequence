@@ -25,6 +25,7 @@ function ribbon(seq, max = 18) {
 }
 
 const sizeLine = (z) => !z ? '' : [z.v && z.v.length && `Vials: ${z.v.join(', ')}`, z.c && z.c.length && `Capsules: ${z.c.join(', ')}`].filter(Boolean).join(' · ');
+const vialMgs = (z) => !z || !z.v ? [] : [...new Set(z.v.flatMap((t) => [...t.matchAll(/([\d,.]+)\s*mg/g)].map((m) => +m[1].replace(/,/g, ''))))].sort((a, b) => a - b);
 const blendsFor = (slug) => BLENDS.filter((b) => b.parts.includes(slug));
 
 const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -252,7 +253,12 @@ ${nav()}
 
   <h2>What is it?</h2>
   <p>${esc(p.what)}</p>
-
+${vialMgs(p.sizes).length ? `
+  <h2 id="mix">Got a vial? See how it mixes</h2>
+  <p class="muted">Tap your vial size to watch how it is mixed and see exactly what each mark on the syringe holds.</p>
+  <div class="mix" data-mix data-name="${esc(p.name)}" data-sizes="${esc(JSON.stringify(vialMgs(p.sizes)))}"><noscript>Turn on JavaScript to use the mixing demo, or use the <a href="/calculator/">mixing calculator</a>.</noscript></div>
+  <script src="/assets/mix-demo.js" defer></script>
+` : ''}
   <h2>What studies show</h2>
   <ul class="findings">${p.studies.map(([k, t]) => `<li><span class="tag ${k}">${tagWord[k]}</span><span>${esc(t)}</span></li>`).join('')}</ul>
 
