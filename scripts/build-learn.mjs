@@ -26,6 +26,14 @@ function ribbon(seq, max = 18) {
 
 const sizeLine = (z) => !z ? '' : [z.v && z.v.length && `Vials: ${z.v.join(', ')}`, z.c && z.c.length && `Capsules: ${z.c.join(', ')}`].filter(Boolean).join(' · ');
 const vialMgs = (z) => !z || !z.v ? [] : [...new Set(z.v.flatMap((t) => [...t.matchAll(/([\d,.]+)\s*mg/g)].map((m) => +m[1].replace(/,/g, ''))))].sort((a, b) => a - b);
+// Official FDA labels (DailyMed, run by the National Library of Medicine) for approved products.
+const LABELS = {
+  semaglutide: ['Wegovy and Ozempic', 'semaglutide'], tirzepatide: ['Zepbound and Mounjaro', 'tirzepatide'], liraglutide: ['Saxenda and Victoza', 'liraglutide'],
+  tesamorelin: ['Egrifta', 'egrifta'], 'pt-141': ['Vyleesi', 'vyleesi'], 'ss-31': ['Forzinity', 'forzinity'], hcg: ['Novarel and Pregnyl', 'chorionic gonadotropin'],
+  oxytocin: ['Pitocin', 'pitocin'], 'melanotan-1': ['Scenesse', 'scenesse'],
+};
+const labelBox = (p) => { const l = LABELS[p.slug]; if (!l) return '';
+  return `<div class="fda-label"><div><p class="eyebrow" style="margin:0 0 6px">Official prescribing information</p><p>${esc(l[0])} ${l[0].includes(' and ') ? 'are' : 'is'} FDA-approved. The official label shows how it was dosed in the trials that led to approval, along with warnings and who should not use it.</p><p class="fine">Doses on the label are for the approved product under a prescriber’s care. Talk with your doctor before starting anything.</p></div><a class="btn" href="https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&amp;query=${encodeURIComponent(l[1])}" target="_blank" rel="noopener">Read the FDA label ↗</a></div>`; };
 const blendsFor = (slug) => BLENDS.filter((b) => b.parts.includes(slug));
 
 const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -258,7 +266,7 @@ ${vialMgs(p.sizes).length ? `
   <p class="muted">Tap your vial size to watch how it is mixed and see exactly what each mark on the syringe holds.</p>
   <div class="mix" data-mix data-name="${esc(p.name)}" data-sizes="${esc(JSON.stringify(vialMgs(p.sizes)))}"><noscript>Turn on JavaScript to use the mixing demo, or use the <a href="/calculator/">mixing calculator</a>.</noscript></div>
   <script src="/assets/mix-demo.js" defer></script>
-` : ''}
+` : ''}${labelBox(p)}
   <h2>What studies show</h2>
   <ul class="findings">${p.studies.map(([k, t]) => `<li><span class="tag ${k}">${tagWord[k]}</span><span>${esc(t)}</span></li>`).join('')}</ul>
 

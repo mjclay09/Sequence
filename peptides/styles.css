@@ -206,3 +206,9 @@ footer a{color:var(--muted)}
 .mix-table th{text-align:left;font-weight:500;color:var(--muted);border-bottom:1px solid var(--line-2);padding:8px 0}
 .mix-table td{border-bottom:1px solid var(--line);padding:8px 0;font-family:var(--mono);font-size:.86rem}
 .mix-note{font-size:.86rem;color:var(--faint);margin:0 0 14px}
+/* FDA label link */
+.fda-label{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;border:1px solid rgba(147,213,205,.3);background:var(--ice-soft);border-radius:20px;padding:18px 20px;margin:18px 0 6px}
+.fda-label>div{flex:1 1 320px;min-width:0}
+.fda-label p{margin:0 0 6px;font-size:.95rem}
+.fda-label .fine{font-size:.82rem;color:var(--muted);margin:0}
+.fda-label .btn{flex:none}
